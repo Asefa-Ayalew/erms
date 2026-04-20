@@ -15,17 +15,19 @@ export const Sidebar = () => {
       <Box className="hidden md:flex h-16 border-b border-gray-100 px-6 max-h-16 overflow-hidden w-full items-center bg-white">
         <Link
           href="/dashboard"
-          className="text-xl flex font-bold items-center gap-3 no-underline"
+          className="flex items-center gap-3 no-underline"
         >
-          <Box className="p-1.5 rounded-lg bg-indigo-50 border border-indigo-100 shadow-sm">
-            <IconFlame size={24} stroke={2} />
+          <Box className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-600 to-violet-500 shadow-md shadow-indigo-100">
+            <IconFlame size={22} stroke={2} className="text-white" />
           </Box>
-          <Text
-            size="lg"
-            className="font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-900"
-          >
-            {"ERMS"}
-          </Text>
+          <Box>
+            <Text size="lg" className="font-semibold text-slate-900 tracking-tight">
+              ERMS
+            </Text>
+            <Text size="xs" className="text-slate-500 italic mt-0.5">
+              Enterprise resource management
+            </Text>
+          </Box>
         </Link>
       </Box>
 

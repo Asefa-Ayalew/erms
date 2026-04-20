@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { MantineProvider } from "@mantine/core";
-import { theme } from "../../theme";
+import { Providers } from "./providers";
 import { Shell } from "../lib/core/shell/Shell";
-import { AuthProvider } from "@/lib/auth/providers/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ERMS",
+  title: "erms",
   description: "Enterprise Resource Management System",
 };
 
@@ -31,12 +29,11 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head></head>
       <body className="min-h-full flex flex-col">
-        <MantineProvider theme={theme}>
-          <AuthProvider>
-            <Shell>{children}</Shell>
-          </AuthProvider>
-        </MantineProvider>
+        <Providers>
+          <Shell>{children}</Shell>
+        </Providers>
       </body>
     </html>
   );

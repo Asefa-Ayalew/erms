@@ -3,7 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { Center, Loader, Text, Title } from "@mantine/core";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { userInfo } from "@/lib/auth/hooks/user-info";
 
 type AuthGuardProps = {
   children: ReactNode;
@@ -11,16 +11,16 @@ type AuthGuardProps = {
 };
 
 export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
-  const auth = useAuth();
+  const user = userInfo();
   const router = useRouter();
 
   useEffect(() => {
-    if (!auth.isLoading && !auth.isAuthenticated) {
+    if (!user.isLoading && !user.isAuthenticated) {
       router.push("/login");
     }
-  }, [auth.isLoading, auth.isAuthenticated, router]);
+  }, [user.isLoading, user.isAuthenticated, router]);
 
-  if (auth.isLoading) {
+  if (user.isLoading) {
     return (
       <Center className="min-h-[60vh]">
         <Loader size="lg" />
@@ -28,7 +28,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     );
   }
 
-  if (!auth.isAuthenticated) {
+  if (!user.isAuthenticated) {
     return (
       <Center className="min-h-[60vh]">
         <Loader size="lg" />
@@ -36,7 +36,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     );
   }
 
-  if (allowedRoles && !allowedRoles.some((role) => auth.hasRole(role))) {
+  if (allowedRoles && !allowedRoles.some((role) => user.hasRole(role))) {
     return (
       <Center className="min-h-[60vh]">
         <div className="space-y-2 text-center">

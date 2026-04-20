@@ -7,16 +7,20 @@ type RootState = {
   [key: string]: unknown;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://lr24j6p3-3001.uks1.devtunnels.ms";
+const baseUrl = apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? "/api",
+  baseUrl,
   prepareHeaders: (headers, { getState }) => {
+    // Don't set authorization header for login - let cookies handle auth
     const token = (getState() as RootState).auth.token;
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
     return headers;
   },
-  credentials: "include",
+  credentials: "omit",
 });
 
 export const authApi = createApi({

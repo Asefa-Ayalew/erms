@@ -1,10 +1,9 @@
 "use client";
-import { ScrollArea } from "@mantine/core";
-import { useToggle } from "@mantine/hooks";
+import { ScrollArea, Box, Text, UnstyledButton } from "@mantine/core";
 // biome-ignore lint/nursery/noRestrictedImports: <explanation>
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
 import { cn } from "@/lib/ui/utilities/cn";
 export type MenuTree = {
@@ -23,29 +22,7 @@ type MenuItemProps = {
   level?: number;
 };
 
-type MenuLabelProps = {
-  link?: string;
-  icon?: React.ReactNode;
-  label: string;
-  level?: number;
-  pathMatch?: number;
-};
-
 const startsWith = (str: string, prefix: string) => str.startsWith(prefix);
-
-const NavigationLink = ({
-  href,
-  children,
-  onClick,
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) => (
-  <Link href={href} onClick={onClick}>
-    {children}
-  </Link>
-);
 
 function haveSameParentAtLevel(
   path1: string,
@@ -80,45 +57,16 @@ const findActiveSubMenu = (data: MenuTree[], pathname: string): string[] => {
   return activeMenus;
 };
 
-const MenuLabel = ({
-  icon,
-  link,
-  label,
-  pathMatch = 3,
-  level = 0,
-}: MenuLabelProps) => {
-  const pathname = usePathname();
-
-  const active =
-    link &&
-    (startsWith(pathname, link) ||
-      haveSameParentAtLevel(pathname, link, pathMatch));
-
-  const paddingLeft = 12 * level;
-
-  return (
-    <div
-      className={cn(
-        classes.menuItem,
-        "text-primary-text flex cursor-pointer items-center  rounded-md px-2 py-1 transition duration-300 ease-in-out",
-        active ? classes.active : "",
-      )}
-      style={{ paddingLeft: paddingLeft <= 0 ? 12 : paddingLeft }}
-    >
-      <div
-        className={cn(classes.activeIndicator, active ? "bg-primary-5" : "")}
-      />
-      <div className={classes.labelIcon}>{icon}</div>
-      <span className="ml-1 truncate">{label}</span>
-    </div>
-  );
-};
-
 const MenuItem = ({ data, level = 0 }: MenuItemProps) => {
   const { isGroup, label, link, icon, children, pathMatch: compare } = data;
   const pathname = usePathname();
+  const router = useRouter();
 
-  const [open, toggle] = useToggle([false, true]);
+  // Start with menus expanded by default
+  const [expanded, setExpanded] = useState(true);
+
+  // Check if this is a main group that should have expand/collapse
+  const isExpandableGroup = ['Human Resource', 'Project Management', 'Inventory', 'Administration'].includes(label);
 
   const isActiveChildren = useMemo(() => {
     if (children?.length) {
@@ -128,46 +76,144 @@ const MenuItem = ({ data, level = 0 }: MenuItemProps) => {
     return false;
   }, [pathname, children]);
 
-  const left = 20 * level + 10;
   const hasChildren = (children?.length ?? 0) > 0;
-  const showChildren = (isGroup || open || isActiveChildren) && hasChildren;
+  const isActive = link && (startsWith(pathname, link) || haveSameParentAtLevel(pathname, link, compare || 3));
+
+  const handleToggle = () => {
+    if (link && !hasChildren && !isGroup) {
+      router.push(link);
+      return;
+    }
+
+    if (hasChildren && (isExpandableGroup || !isGroup)) {
+      setExpanded(!expanded);
+    }
+  };
 
   return (
-    <li className={cn("relative", isGroup ? "mt-0" : "mt-1")}>
-      {isGroup && <span className={classes.groupLabel}>{label}</span>}
-
-      {!isGroup &&
-        (link ? (
-          <NavigationLink href={link} onClick={() => toggle()}>
-            <MenuLabel
-              icon={icon}
-              label={label}
-              level={level}
-              link={link}
-              pathMatch={compare}
-            />
-          </NavigationLink>
-        ) : (
-          <button
-            type="button"
-            className="block w-full"
-            onClick={() => toggle()}
+    <li className="relative">
+      {isGroup ? (
+        isExpandableGroup ? (
+          <UnstyledButton
+            onClick={handleToggle}
+            className={cn(
+              "w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out hover:bg-blue-50 hover:text-blue-700 mb-2",
+              expanded ? "bg-blue-50 text-blue-800" : "bg-gray-50 text-gray-700",
+              "font-semibold text-sm uppercase tracking-wide border-l-2 border-blue-200"
+            )}
           >
-            <MenuLabel
-              icon={icon}
-              label={label}
-              level={level}
-              pathMatch={compare}
-            />
-          </button>
-        ))}
+            <Box className="flex items-center gap-3 flex-1 min-w-0">
+              {icon && (
+                <Box className="shrink-0 w-5 h-5 text-blue-600">
+                  {icon}
+                </Box>
+              )}
+              <Text className="truncate font-semibold text-sm">
+                {label}
+              </Text>
+            </Box>
 
-      {showChildren && (
-        <ul className={cn("relative", isGroup ? "mt-1" : "")}>
-          <div
-            className={cn(open ? classes.menuItemContainer : "")}
-            style={{ left }}
-          />
+            <Box className="shrink-0 ml-2">
+              {expanded ? (
+                <IconChevronDown size={16} className="text-blue-600 transition-transform duration-200" />
+              ) : (
+                <IconChevronRight size={16} className="text-gray-500 transition-transform duration-200" />
+              )}
+            </Box>
+          </UnstyledButton>
+        ) : (
+          <Box className="mb-2">
+            <Text className={cn(classes.groupLabel, "px-3")}>{label}</Text>
+          </Box>
+        )
+      ) : (
+        <UnstyledButton
+          onClick={handleToggle}
+          className={cn(
+            classes.menuItem,
+            "w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out",
+            "hover:bg-blue-50 hover:text-blue-700",
+            level > 0 && "ml-6",
+            isActive && "bg-blue-100 text-blue-800 font-medium shadow-sm",
+            isActiveChildren && "bg-blue-50 text-blue-700"
+          )}
+        >
+          <Box className="flex items-center gap-3 flex-1 min-w-0">
+            {icon && (
+              <Box className={cn(
+                "shrink-0 w-5 h-5",
+                isActive ? "text-blue-600" : "text-gray-500"
+              )}>
+                {icon}
+              </Box>
+            )}
+            <Text
+              size="sm"
+              className="truncate font-medium"
+              style={{ color: 'inherit' }}
+            >
+              {label}
+            </Text>
+          </Box>
+
+          {hasChildren && (
+            <Box className="shrink-0 ml-2">
+              {expanded ? (
+                <IconChevronDown
+                  size={16}
+                  className="text-gray-400 transition-transform duration-200"
+                />
+              ) : (
+                <IconChevronRight
+                  size={16}
+                  className="text-gray-400 transition-transform duration-200"
+                />
+              )}
+            </Box>
+          )}
+        </UnstyledButton>
+      )}
+
+      {hasChildren && !isGroup && (
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out",
+            expanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
+          )}
+        >
+          <ul className="space-y-1 py-1">
+            {(children ?? []).map((child) => (
+              <MenuItem
+                data={child}
+                level={level + 1}
+                key={`${child.label}-${child.link}`}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {isGroup && hasChildren && isExpandableGroup && (
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out",
+            expanded ? "max-h-96 opacity-100 mt-1" : "max-h-0 opacity-0"
+          )}
+        >
+          <ul className="space-y-1 py-1">
+            {(children ?? []).map((child) => (
+              <MenuItem
+                data={child}
+                level={level + 1}
+                key={`${child.label}-${child.link}`}
+              />
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {isGroup && hasChildren && !isExpandableGroup && (
+        <ul className="mt-2 space-y-1">
           {(children ?? []).map((child) => (
             <MenuItem
               data={child}
@@ -183,8 +229,8 @@ const MenuItem = ({ data, level = 0 }: MenuItemProps) => {
 
 export function SideMenu({ menu }: { menu: MenuTree[] }) {
   return (
-    <ScrollArea className="w-full px-4 py-2" scrollHideDelay={500}>
-      <ul>
+    <ScrollArea className="w-full px-4 py-4" scrollHideDelay={500}>
+      <ul className="space-y-2">
         {menu.map((group, index) => (
           <MenuItem data={group} key={`${group.label}-${index}`} />
         ))}

@@ -6,7 +6,7 @@ const COOKIE_NAME = "erms_token";
 
 export type SessionPayload = {
   id: string;
-  email: string;
+  username: string;
   name: string;
   roles: string[];
   iat: number;
@@ -16,6 +16,7 @@ export type SessionPayload = {
 export const users = [
   {
     id: "1",
+    username: "admin",
     email: "admin@example.com",
     password: "Password123!",
     name: "Admin User",
@@ -23,21 +24,28 @@ export const users = [
   },
   {
     id: "2",
+    username: "user1@gmail.com",
     email: "employee@example.com",
-    password: "Password123!",
+    password: "123456",
     name: "Team Member",
     roles: ["user"],
   },
 ];
 
-export function findUserByEmail(email: string) {
-  return users.find((user) => user.email.toLowerCase() === email.toLowerCase()) ?? null;
+export function findUserByUsername(username: string) {
+  const normalized = username.trim().toLowerCase();
+  return (
+    users.find(
+      (user) =>
+        user.username.toLowerCase() === normalized || user.email.toLowerCase() === normalized,
+    ) ?? null
+  );
 }
 
 export function createSessionToken(profile: UserProfile, expiresInSeconds = 60 * 60 * 24 * 7) {
   const payload: SessionPayload = {
     id: profile.id,
-    email: profile.email,
+    username: profile.username,
     name: profile.name,
     roles: profile.roles,
     iat: Math.floor(Date.now() / 1000),
@@ -103,10 +111,10 @@ export function getTokenFromRequest(request: Request) {
   return tokenCookie?.split("=")[1] ?? null;
 }
 
-export function sanitizeUser(user: { id: string; email: string; name: string; roles: string[] | readonly string[] }) {
+export function sanitizeUser(user: { id: string; username: string; email: string; name: string; roles: string[] | readonly string[] }) {
   return {
     id: user.id,
-    email: user.email,
+    username: user.username,
     name: user.name,
     roles: Array.isArray(user.roles) ? [...user.roles] : [],
   } as UserProfile;

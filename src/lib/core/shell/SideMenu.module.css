@@ -1,43 +1,50 @@
 .groupLabel {
   text-transform: uppercase;
-  color: rgb(var(--primary-color-text) / 0.7);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 20px;
+  color: rgb(107 114 128);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.05em;
+  padding: 0 12px;
+  margin-bottom: 8px;
 }
 
 .menuItem {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 21px;
-  min-height: 32px;
-}
-.menuItem:hover,
-.menuItem.active {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  min-height: 40px;
   position: relative;
-  background-color: var(--primary-color-1);
-  color: var(--primary-text-color);
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
 }
 
-.active .activeIndicator {
+.menuItem:hover {
+  background-color: rgb(239 246 255);
+  color: rgb(37 99 235);
+  transform: translateX(2px);
+}
+
+.menuItem.active {
+  background-color: rgb(219 234 254);
+  color: rgb(30 64 175);
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.activeIndicator {
   content: "";
-  top: 6px;
-  bottom: 6px;
   position: absolute;
-  background-color: var(--primary-color-5);
-  left: 4px;
-  z-index: 1;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
   width: 3px;
-  border-radius: 3px;
+  background-color: rgb(59 130 246);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
 }
-.menuItemContainer {
-  content: "";
-  height: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  z-index: 1;
 
-  background: var(--primary-color-2);
+.menuItem.active .activeIndicator {
+  opacity: 1;
 }

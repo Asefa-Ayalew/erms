@@ -2,10 +2,10 @@
 
 import { Button, Card, Text, Title } from "@mantine/core";
 import { AuthGuard } from "@/components/auth/AuthGuard";
-import { useAuth } from "@/lib/auth/hooks/useAuth";
+import { userInfo } from "@/lib/auth/hooks/user-info";
 
 export default function DashboardPage() {
-  const auth = useAuth();
+  const user = userInfo();
 
   return (
     <AuthGuard allowedRoles={["admin", "user"]}>
@@ -15,7 +15,7 @@ export default function DashboardPage() {
             <Title order={2}>Dashboard</Title>
             <Text color="dimmed">A protected page that requires authentication.</Text>
           </div>
-          <Button variant="outline" color="red" onClick={auth.logout}>
+          <Button variant="outline" color="red" onClick={user.logout}>
             Sign out
           </Button>
         </div>
@@ -23,9 +23,9 @@ export default function DashboardPage() {
         <Card shadow="sm" radius="md" withBorder>
           <div className="space-y-3">
             <Text size="lg" fw={600}>
-              Welcome back, {auth.user?.name}
+              Welcome back, {user.user?.name}
             </Text>
-            <Text color="dimmed">Your account roles: {auth.user?.roles.join(", ")}</Text>
+            <Text color="dimmed">Your account roles: {user.user?.roles.join(", ")}</Text>
           </div>
         </Card>
       </div>

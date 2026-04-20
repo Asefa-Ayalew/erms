@@ -3,12 +3,12 @@
 import { Avatar, Group, Menu, UnstyledButton, Text, Box } from '@mantine/core';
 import { IconLogout, IconSettings, IconUser, IconChevronDown } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth/hooks/useAuth';
+import { userInfo } from '@/lib/auth/hooks/user-info';
 
 export function UserProfile() {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const auth = useAuth();
-  const initials = auth.user ? auth.user.name.split(' ').map((part) => part[0]).join('') : 'GU';
+  const user = userInfo();
+  const initials = user.user ? user.user.name.split(' ').map((part: string) => part[0]).join('') : 'GU';
 
   return (
     <Menu
@@ -31,10 +31,10 @@ export function UserProfile() {
             </Avatar>
             <Box className="hidden sm:block text-left">
               <Text size="sm" className="font-semibold text-gray-800 leading-tight">
-                {auth.user?.name ?? 'Guest'}
+                {user.user?.name ?? 'Guest'}
               </Text>
               <Text size="xs" color="dimmed" className="leading-tight">
-                {auth.user ? auth.user.roles.join(', ') : 'Not signed in'}
+                {user.user ? user.user.roles.join(', ') : 'Not signed in'}
               </Text>
             </Box>
             <IconChevronDown size={14} className="text-gray-400" />
@@ -54,7 +54,7 @@ export function UserProfile() {
           color="red"
           leftSection={<IconLogout size={16} stroke={1.5} />}
           className="rounded-lg hover:bg-red-50 font-medium"
-          onClick={auth.logout}
+          onClick={user.logout}
         >
           Sign Out
         </Menu.Item>

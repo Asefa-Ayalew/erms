@@ -12,5 +12,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  return NextResponse.json({ id: payload.id, email: payload.email, name: payload.name, roles: payload.roles }, { status: 200 });
+  return NextResponse.json({ id: payload.id, username: payload.username, name: payload.name, roles: payload.roles }, { status: 200 });
 }

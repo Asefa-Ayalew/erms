@@ -14,21 +14,47 @@ import {
   Alert,
 } from '@mantine/core';
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { userInfo } from '../hooks/user-info';
 import classes from './Signin.module.css';
 
 export function Signin() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const { login, isLoading } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { login, isLoading } = userInfo();
+
+  const parseLoginError = (error: unknown) => {
+    if (!error || typeof error !== 'object') {
+      return 'Login failed. Please try again.';
+    }
+
+    if ('data' in error && error.data) {
+      const data = (error as { data: unknown }).data;
+      if (typeof data === 'string') {
+        return data;
+      }
+      if (typeof data === 'object' && data !== null && 'error' in data) {
+        const errorField = (data as { error: unknown }).error;
+        return typeof errorField === 'string' ? errorField : 'Login failed. Please try again.';
+      }
+    }
+
+    if ('message' in error && typeof (error as { message: unknown }).message === 'string') {
+      return (error as { message: string }).message;
+    }
+
+    return 'Login failed. Please try again.';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
     try {
-      await login({ email, password });
+      await login({ username, password });
     } catch (error) {
-      // Error is handled in the provider
+      setErrorMessage(parseLoginError(error));
     }
   };
 
@@ -45,12 +71,12 @@ export function Signin() {
       <Paper withBorder shadow="sm" p={22} mt={30} radius="md">
         <form onSubmit={handleSubmit}>
           <TextInput
-            label="Email"
-            placeholder="you@mantine.dev"
+            label="Username"
+            placeholder="Enter your username"
             required
             radius="md"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <PasswordInput
             label="Password"
@@ -71,6 +97,11 @@ export function Signin() {
               Forgot password?
             </Anchor>
           </Group>
+          {errorMessage ? (
+            <Alert title="Login failed" color="red" mt="md">
+              {errorMessage}
+            </Alert>
+          ) : null}
           <Button fullWidth mt="xl" radius="md" type="submit" loading={isLoading}>
             Sign in
           </Button>

@@ -5,7 +5,6 @@ import {
   IconBriefcase,
   IconCalendarStats,
   IconChecklist,
-  IconFileText,
   IconSettings,
   IconBuilding,
   IconPackage,

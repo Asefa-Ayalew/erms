@@ -1,22 +1,34 @@
 import { NextResponse } from "next/server";
-import { loginInputSchema } from "@/types/auth";
-import { findUserByEmail, buildCookie, createSessionToken, sanitizeUser } from "@/lib/auth/server";
+
+const EXTERNAL_AUTH_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://lr24j6p3-3001.uks1.devtunnels.ms";
+const LOGIN_URL = EXTERNAL_AUTH_URL.endsWith("/") ? `${EXTERNAL_AUTH_URL}auth/login` : `${EXTERNAL_AUTH_URL}/auth/login`;
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = loginInputSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  const body = await request.text();
+  const headers: Record<string, string> = {
+    "Content-Type": request.headers.get("content-type") ?? "application/json",
+    Accept: request.headers.get("accept") ?? "application/json",
+  };
+
+  const externalResponse = await fetch(LOGIN_URL, {
+    method: "POST",
+    headers,
+    body,
+    credentials: "include",
+  });
+
+  const responseBody = await externalResponse.text();
+  const response = new NextResponse(responseBody, {
+    status: externalResponse.status,
+    headers: {
+      "content-type": externalResponse.headers.get("content-type") ?? "application/json",
+    },
+  });
+
+  const setCookie = externalResponse.headers.get("set-cookie");
+  if (setCookie) {
+    response.headers.set("set-cookie", setCookie);
   }
 
-  const userRecord = findUserByEmail(parsed.data.email);
-  if (!userRecord || userRecord.password !== parsed.data.password) {
-    return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
-  }
-
-  const user = sanitizeUser(userRecord);
-  const token = createSessionToken(user);
-  const response = NextResponse.json({ token, user }, { status: 200 });
-  response.headers.append("Set-Cookie", buildCookie(token));
   return response;
 }
