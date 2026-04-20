@@ -14,8 +14,8 @@ import {
   Alert,
 } from '@mantine/core';
 import { useState } from 'react';
-import { userInfo } from '../hooks/user-info';
 import classes from './Signin.module.css';
+import { userInfo } from '../hooks/user-info';
 
 export function Signin() {
   const [username, setUsername] = useState('');

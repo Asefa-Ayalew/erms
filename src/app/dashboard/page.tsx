@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Text, Title } from "@mantine/core";
+import { Card, Text, Title } from "@mantine/core";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { userInfo } from "@/lib/auth/hooks/user-info";
 
