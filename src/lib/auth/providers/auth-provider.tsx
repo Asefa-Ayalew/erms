@@ -1,10 +1,10 @@
 "use client";
 
-import { ReactNode, createContext, useContext, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { ReactNode, createContext, useContext, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { store } from "@/store/store";
-import { authApi, useLoginMutation, useMeQuery } from "@/store/api/authApi";
+import { useLoginMutation, useMeQuery } from "@/store/api/authApi";
 import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import type { LoginRequest, UserProfile } from "@/types/auth";
 import type { RootState } from "@/store/store";
@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 function AuthInnerProvider({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
   const authState = useSelector((state: RootState) => state.auth);
   const [loginRequest, loginState] = useLoginMutation();
   const { data: me, isLoading: isProfileLoading, error } = useMeQuery(undefined, {
@@ -47,10 +48,24 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
     }
   }, [error, dispatch]);
 
+  useEffect(() => {
+    if (loginState.isLoading || isProfileLoading) {
+      return;
+    }
+
+    if (!authState.token && pathname !== "/login") {
+      router.push("/login");
+      return;
+    }
+
+    if (authState.token && authState.user && pathname === "/login") {
+      router.push("/dashboard");
+    }
+  }, [authState.token, authState.user, isProfileLoading, loginState.isLoading, pathname, router]);
+
   const login = async (payload: LoginRequest) => {
     const result = await loginRequest(payload).unwrap();
     dispatch(setCredentials(result));
-    router.push("/dashboard");
   };
 
   const logout = () => {
@@ -60,17 +75,14 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
 
   const hasRole = (role: string) => authState.user?.roles.includes(role) ?? false;
 
-  const contextValue = useMemo(
-    () => ({
-      user: authState.user,
-      isAuthenticated: Boolean(authState.user),
-      isLoading: loginState.isLoading || isProfileLoading,
-      login,
-      logout,
-      hasRole,
-    }),
-    [authState.user, authState.token, loginState.isLoading, isProfileLoading],
-  );
+  const contextValue = {
+    user: authState.user,
+    isAuthenticated: Boolean(authState.user),
+    isLoading: loginState.isLoading || isProfileLoading,
+    login,
+    logout,
+    hasRole,
+  };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }

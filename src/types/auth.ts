@@ -14,7 +14,8 @@ export const userProfileSchema = z.object({
 
 export const loginResponseSchema = z.object({
   token: z.string(),
-  user: userProfileSchema,
+  refreshToken: z.string().nullable().optional(),
+  user: userProfileSchema.nullable().optional(),
 });
 
 export type LoginRequest = z.infer<typeof loginInputSchema>;

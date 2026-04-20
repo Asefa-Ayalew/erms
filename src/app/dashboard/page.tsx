@@ -15,9 +15,6 @@ export default function DashboardPage() {
             <Title order={2}>Dashboard</Title>
             <Text color="dimmed">A protected page that requires authentication.</Text>
           </div>
-          <Button variant="outline" color="red" onClick={user.logout}>
-            Sign out
-          </Button>
         </div>
 
         <Card shadow="sm" radius="md" withBorder>
