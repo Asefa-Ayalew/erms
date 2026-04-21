@@ -52,7 +52,7 @@ export function NotificationPreview() {
         p={0}
         className="rounded-xl border border-gray-100 shadow-2xl overflow-hidden w-80"
       >
-        <Box className="p-4 bg-gradient-to-r from-indigo-50 to-white flex items-center justify-between">
+        <Box className="p-4 bg-linear-to-r from-indigo-50 to-white flex items-center justify-between">
           <Text className="font-semibold text-gray-800">Notifications</Text>
           <ActionIcon variant="transparent" size="sm" color="indigo">
             <IconCheck size={16} />

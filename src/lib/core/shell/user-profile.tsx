@@ -56,7 +56,7 @@ export function UserProfile() {
           className="rounded-lg hover:bg-red-50 font-medium"
           onClick={user.logout}
         >
-          Sign Out
+          Log Out
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

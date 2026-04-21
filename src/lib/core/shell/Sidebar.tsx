@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Box, Text } from "@mantine/core";
 import { IconFlame } from "@tabler/icons-react";
 
-import { OfficeMenus } from "./menus";
+import { Menus } from "./menus";
 import { SideMenu } from "./side-menu";
 
 export const Sidebar = () => {
@@ -32,7 +32,7 @@ export const Sidebar = () => {
       </Box>
 
       <Box className="flex-1 overflow-y-auto bg-gray-50/50">
-        <SideMenu menu={OfficeMenus()} />
+        <SideMenu menu={Menus()} />
       </Box>
 
       <Box className="flex flex-col gap-3 border-t border-gray-100 px-5 py-4 bg-white text-xs text-gray-500 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">

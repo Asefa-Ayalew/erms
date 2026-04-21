@@ -20,7 +20,7 @@ import {
 
 import { MenuTree } from "./side-menu";
 
-export const OfficeMenus = (): MenuTree[] => {
+export const Menus = (): MenuTree[] => {
   return [
     // Dashboard
     {
@@ -172,21 +172,3 @@ export const OfficeMenus = (): MenuTree[] => {
     },
   ];
 };
-
-export const PortalMenus = (): MenuTree[] => [
-  {
-    label: "My Dashboard",
-    icon: <IconHome stroke={1.4} size={18} />,
-    link: "/portal/dashboard",
-  },
-  {
-    label: "My Tasks",
-    icon: <IconChecklist stroke={1.4} size={18} />,
-    link: "/portal/tasks",
-  },
-  {
-    label: "My Attendance",
-    icon: <IconCalendarStats stroke={1.4} size={18} />,
-    link: "/portal/attendance",
-  },
-];
