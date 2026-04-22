@@ -4,9 +4,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useToggle } from "react-use";
 
+import { useClient } from "@/lib/hooks/useClient";
 import { ColorSchemeToggle } from "@/components/color-scheme-toggle/color-scheme-toggle";
 import { NotificationPreview } from "./notification-preview";
 import { OrganizationSelector } from "./organization-selector";
@@ -22,14 +23,10 @@ export function Shell({ children }: ShellProps): ReactNode {
   const [opened, { open, close }] = useDisclosure(false);
   const [isSidebarOpen, toggleSidebar] = useToggle(true);
   const pathname = usePathname();
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isClient = useClient();
 
   // Hide sidebar and header on login page - only after hydration to prevent mismatch
-  const isLoginPage = isHydrated && pathname === '/login';
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isLoginPage = isClient && pathname === "/login";
 
   useEffect(() => {
     const handleResize = () => {

@@ -4,29 +4,27 @@ import { useNetwork } from "@mantine/hooks";
 import Link from "next/link";
 import { Box, Text } from "@mantine/core";
 import { IconHierarchy2 } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import { userInfo } from "@/lib/auth/hooks/user-info";
-import { filterMenusByRole } from "./filter-menus-by-role";
+import { filterMenusByRole } from "@/lib/auth/menu";
+import { useUserInfo } from "@/lib/auth/hooks/user-info";
+import { useClient } from "@/lib/hooks/useClient";
 import { Menus } from "./menus";
 import { SideMenu } from "./side-menu";
 
 export const Sidebar = () => {
   const networkStatus = useNetwork();
-  const auth = userInfo();
+  const auth = useUserInfo();
   const year = new Date().getFullYear();
 
-  const [hasMounted, setHasMounted] = useState(false);
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  const isClient = useClient();
 
   const menu = useMemo(() => {
-    if (!hasMounted) {
+    if (!isClient) {
       return Menus();
     }
     return filterMenusByRole(Menus(), auth.user?.roles);
-  }, [hasMounted, auth.user?.roles]);
+  }, [isClient, auth.user?.roles]);
 
   return (
     <>
@@ -60,10 +58,10 @@ export const Sidebar = () => {
         <Box className="flex items-center justify-between">
           <Box className="flex items-center gap-2">
             <Box
-              className={`w-2 h-2 rounded-full ${(hasMounted ? networkStatus.online : true) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
+              className={`w-2 h-2 rounded-full ${(isClient ? networkStatus.online : true) ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"}`}
             />
             <Text size="xs" className="font-medium text-gray-600">
-              {hasMounted ? (networkStatus.online ? "System Online" : "System Offline") : "System Online"}
+              {isClient ? (networkStatus.online ? "System Online" : "System Offline") : "System Online"}
             </Text>
           </Box>
           <Text size="xs" color="dimmed" className="font-mono">

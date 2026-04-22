@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import classes from './Signin.module.css';
-import { userInfo } from '../hooks/user-info';
+import { useUserInfo } from "../hooks/user-info";
 
 export function Signin() {
   const [username, setUsername] = useState('');
@@ -23,7 +23,7 @@ export function Signin() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login, isLoading } = userInfo();
+  const { login, isLoading } = useUserInfo();
 
   const parseLoginError = (error: unknown) => {
     if (!error || typeof error !== 'object') {

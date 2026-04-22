@@ -3,7 +3,8 @@
 import { ReactNode, createContext, useContext, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation, useMeQuery } from "@/app/(features)/auth/queries/auth.api";
+import { useLoginMutation } from "@/app/(features)/auth/queries/auth.api";
+import { hasRole } from "@/lib/auth/roles";
 import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import type { LoginRequest, UserProfile } from "@/types/auth";
 import type { RootState } from "@/lib/core/store/app-store";
@@ -25,30 +26,9 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const authState = useSelector((state: RootState) => state.auth);
   const [loginRequest, loginState] = useLoginMutation();
-  const { data: me, isLoading: isProfileLoading, error } = useMeQuery(undefined, {
-    skip: !authState.token,
-    refetchOnMountOrArgChange: true,
-  });
 
   useEffect(() => {
-    if (me) {
-      dispatch(
-        setCredentials({
-          user: me,
-          token: authState.token ?? "",
-        }),
-      );
-    }
-  }, [dispatch, me, authState.token]);
-
-  useEffect(() => {
-    if (error) {
-      dispatch(clearCredentials());
-    }
-  }, [error, dispatch]);
-
-  useEffect(() => {
-    if (loginState.isLoading || isProfileLoading) {
+    if (loginState.isLoading) {
       return;
     }
 
@@ -60,7 +40,7 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
     if (authState.token && authState.user && pathname === "/login") {
       router.push("/dashboard");
     }
-  }, [authState.token, authState.user, isProfileLoading, loginState.isLoading, pathname, router]);
+  }, [authState.token, authState.user, loginState.isLoading, pathname, router]);
 
   const login = async (payload: LoginRequest) => {
     const result = await loginRequest(payload).unwrap();
@@ -72,15 +52,15 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
     router.push("/login");
   };
 
-  const hasRole = (role: string) => authState.user?.roles.includes(role) ?? false;
+  const checkRole = (role: string) => hasRole(authState.user?.roles, role);
 
   const contextValue = {
     user: authState.user,
-    isAuthenticated: Boolean(authState.user),
-    isLoading: loginState.isLoading || isProfileLoading,
+    isAuthenticated: Boolean(authState.user && authState.token),
+    isLoading: loginState.isLoading,
     login,
     logout,
-    hasRole,
+    hasRole: checkRole,
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

@@ -3,7 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { Center, Loader, Text, Title } from "@mantine/core";
 import { useRouter } from "next/navigation";
-import { userInfo } from "@/lib/auth/hooks/user-info";
+import { useUserInfo } from "@/lib/auth/hooks/user-info";
 
 type AuthGuardProps = {
   children: ReactNode;
@@ -11,7 +11,7 @@ type AuthGuardProps = {
 };
 
 export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
-  const user = userInfo();
+  const user = useUserInfo();
   const router = useRouter();
 
   useEffect(() => {

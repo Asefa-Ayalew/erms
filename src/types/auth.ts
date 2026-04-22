@@ -18,7 +18,7 @@ export const loginResponseSchema = z.object({
   user: userProfileSchema.nullable().optional(),
 });
 
-export type ExternalUserDetailResponse = {
+export type User = {
   id?: string;
   userId?: string;
   sub?: string;
@@ -42,4 +42,5 @@ export type LoginResponse = z.infer<typeof loginResponseSchema>;
 export type AuthState = {
   user: UserProfile | null;
   token: string | null;
+  refreshToken: string | null;
 };

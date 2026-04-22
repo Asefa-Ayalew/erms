@@ -2,6 +2,21 @@ import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import type { FetchArgs } from "@reduxjs/toolkit/query";
 import type { RootState } from "@/lib/core/store/app-store";
 
+function resolveBaseForUrl(baseUrl: string): string {
+  const trimmed = baseUrl.trim();
+  if (trimmed) {
+    return trimmed.endsWith("/") ? trimmed : `${trimmed}/`;
+  }
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/`;
+  }
+  const fallback =
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
+    "http://localhost:3001";
+  return fallback.endsWith("/") ? fallback : `${fallback}/`;
+}
+
 export const axiosBaseQuery =
   (
     { baseUrl }: { baseUrl: string } = { baseUrl: "" }
@@ -20,7 +35,7 @@ export const axiosBaseQuery =
     try {
       const state = getState() as RootState;
       const token = state.auth?.token;
-      const finalUrl = new URL(url, baseUrl || window.location.origin);
+      const finalUrl = new URL(url, resolveBaseForUrl(baseUrl));
       if (params) {
         Object.entries(params).forEach(([key, value]) => {
           if (value !== undefined) {

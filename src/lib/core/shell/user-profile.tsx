@@ -2,20 +2,19 @@
 
 import { Avatar, Group, Menu, UnstyledButton, Text, Box } from '@mantine/core';
 import { IconLogout, IconSettings, IconUser, IconChevronDown } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
-import { userInfo } from '@/lib/auth/hooks/user-info';
+import { useState } from "react";
+import { useClient } from "@/lib/hooks/useClient";
+import { useUserInfo } from "@/lib/auth/hooks/user-info";
 
 export function UserProfile() {
-  const [mounted, setMounted] = useState(false);
+  const isClient = useClient();
   const [userMenuOpened, setUserMenuOpened] = useState(false);
 
-  const user = userInfo();
+  const user = useUserInfo();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+  if (!isClient) {
+    return null;
+  }
 
   const initials = user.user
     ? user.user.name.split(' ').map((part: string) => part[0]).join('')

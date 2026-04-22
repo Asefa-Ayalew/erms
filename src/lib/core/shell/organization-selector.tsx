@@ -1,4 +1,4 @@
-import { Select, Group, Avatar, Text } from '@mantine/core';
+import { Select } from "@mantine/core";
 import { IconBuildingSkyscraper } from '@tabler/icons-react';
 
 export function OrganizationSelector() {

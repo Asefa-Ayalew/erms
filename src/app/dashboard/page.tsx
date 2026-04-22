@@ -23,7 +23,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { AuthGuard } from "@/components/auth/AuthGuard";
-import { userInfo } from "@/lib/auth/hooks/user-info";
+import { useUserInfo } from "@/lib/auth/hooks/user-info";
 import {
   Bar,
   BarChart,
@@ -207,7 +207,7 @@ function ModuleProgressRows({ rows }: { rows: ModuleDashboardConfig["breakdown"]
 }
 
 export default function DashboardPage() {
-  const user = userInfo();
+  const user = useUserInfo();
   const [activeTab, setActiveTab] = useState<DashboardTab>("Dashboard");
   const dashboard = moduleDashboards[activeTab];
 

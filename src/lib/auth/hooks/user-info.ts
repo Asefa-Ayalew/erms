@@ -1,6 +1,7 @@
-"use client"
+"use client";
+
 import { useAuthContext } from "../providers/auth-provider";
 
-export function userInfo() {
+export function useUserInfo() {
   return useAuthContext();
 }

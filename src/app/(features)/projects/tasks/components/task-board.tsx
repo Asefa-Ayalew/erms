@@ -32,6 +32,7 @@ export function TaskBoard() {
   const [modalOpened, setModalOpened] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | undefined>(undefined);
   const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>("not-started");
+  const [createFormKey, setCreateFormKey] = useState(0);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const [sourceStatus, setSourceStatus] = useState<TaskStatus | null>(null);
   const [targetStatus, setTargetStatus] = useState<TaskStatus | null>(null);
@@ -58,6 +59,7 @@ export function TaskBoard() {
   const handleAddTask = (status: TaskStatus) => {
     setNewTaskStatus(status);
     setEditingTask(undefined);
+    setCreateFormKey((k) => k + 1);
     setModalOpened(true);
   };
 
@@ -137,60 +139,6 @@ export function TaskBoard() {
     sourceStatus && targetStatus && sourceStatus !== targetStatus,
   );
 
-  const DndBoardContent = () => (
-    <>
-      <div className="mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <Text fw={800} size="xl" className="text-gray-900 mb-1">
-              Task Manager
-            </Text>
-            <Text size="sm" c="dimmed">
-              {isLoading
-                ? "Loading tasks..."
-                : `${completedTasks} of ${totalTasks} tasks completed`}
-            </Text>
-          </div>
-          <div className="bg-white/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200">
-            <Text size="xs" c="dimmed">
-              Progress:{" "}
-              <span className="font-bold text-blue-600">
-                {totalTasks > 0
-                  ? Math.round((completedTasks / totalTasks) * 100)
-                  : 0}
-                %
-              </span>
-            </Text>
-          </div>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto pb-8 -mx-4 px-4">
-        <div className="flex gap-6 min-w-max">
-          {columns.map((column) => {
-            const columnTasks = getTasks(column.status);
-            return (
-              <TaskColumn
-                key={column.status}
-                status={column.status}
-                title={column.title}
-                count={columnTasks.length}
-                tasks={columnTasks}
-                isSourceColumn={sourceStatus === column.status}
-                isTargetColumn={targetStatus === column.status}
-                isCrossColumnMove={isCrossColumnMove}
-                isDragging={Boolean(activeTask)}
-                onAddTask={handleAddTask}
-                onEditTask={handleEditTask}
-                onDeleteTask={handleDeleteTask}
-              />
-            );
-          })}
-        </div>
-      </div>
-    </>
-  );
-
   const totalTasks = tasks.length;
   const completedTasks = getTasks("completed").length;
 
@@ -205,7 +153,55 @@ export function TaskBoard() {
           onDragEnd={handleDragEnd}
         >
           <div onDragOver={(e) => e.preventDefault()}>
-            <DndBoardContent />
+            <div className="mb-10">
+              <div className="mb-3 flex items-center justify-between">
+                <div>
+                  <Text fw={800} size="xl" className="mb-1 text-gray-900">
+                    Task Manager
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {isLoading
+                      ? "Loading tasks..."
+                      : `${completedTasks} of ${totalTasks} tasks completed`}
+                  </Text>
+                </div>
+                <div className="rounded-lg border border-gray-200 bg-white/60 px-4 py-2 backdrop-blur-sm">
+                  <Text size="xs" c="dimmed">
+                    Progress:{" "}
+                    <span className="font-bold text-blue-600">
+                      {totalTasks > 0
+                        ? Math.round((completedTasks / totalTasks) * 100)
+                        : 0}
+                      %
+                    </span>
+                  </Text>
+                </div>
+              </div>
+            </div>
+
+            <div className="-mx-4 overflow-x-auto px-4 pb-8">
+              <div className="flex min-w-max gap-6">
+                {columns.map((column) => {
+                  const columnTasks = getTasks(column.status);
+                  return (
+                    <TaskColumn
+                      key={column.status}
+                      status={column.status}
+                      title={column.title}
+                      count={columnTasks.length}
+                      tasks={columnTasks}
+                      isSourceColumn={sourceStatus === column.status}
+                      isTargetColumn={targetStatus === column.status}
+                      isCrossColumnMove={isCrossColumnMove}
+                      isDragging={Boolean(activeTask)}
+                      onAddTask={handleAddTask}
+                      onEditTask={handleEditTask}
+                      onDeleteTask={handleDeleteTask}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
           <DragOverlay>
             {activeTask ? (
@@ -242,6 +238,7 @@ export function TaskBoard() {
       </Container>
 
       <TaskModal
+        key={editingTask ? editingTask.id : `create-${createFormKey}`}
         opened={modalOpened}
         onClose={() => {
           setModalOpened(false);
