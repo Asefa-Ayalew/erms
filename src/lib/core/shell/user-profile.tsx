@@ -2,13 +2,24 @@
 
 import { Avatar, Group, Menu, UnstyledButton, Text, Box } from '@mantine/core';
 import { IconLogout, IconSettings, IconUser, IconChevronDown } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { userInfo } from '@/lib/auth/hooks/user-info';
 
 export function UserProfile() {
+  const [mounted, setMounted] = useState(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
+
   const user = userInfo();
-  const initials = user.user ? user.user.name.split(' ').map((part: string) => part[0]).join('') : 'GU';
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const initials = user.user
+    ? user.user.name.split(' ').map((part: string) => part[0]).join('')
+    : 'GU';
 
   return (
     <Menu
@@ -22,13 +33,16 @@ export function UserProfile() {
       <Menu.Target>
         <UnstyledButton
           className={`flex items-center p-1.5 px-3 rounded-full transition-all duration-200 gap-3 border ${
-            userMenuOpened ? 'bg-indigo-50 border-indigo-100 shadow-sm' : 'hover:bg-gray-50 border-transparent'
+            userMenuOpened
+              ? 'bg-indigo-50 border-indigo-100 shadow-sm'
+              : 'hover:bg-gray-50 border-transparent'
           }`}
         >
           <Group gap={12}>
             <Avatar radius="xl" size="md" color="indigo" className="shadow-sm">
               {initials}
             </Avatar>
+
             <Box className="hidden sm:block text-left">
               <Text size="sm" className="font-semibold text-gray-800 leading-tight">
                 {user.user?.name ?? 'Guest'}
@@ -37,19 +51,25 @@ export function UserProfile() {
                 {user.user ? user.user.roles.join(', ') : 'Not signed in'}
               </Text>
             </Box>
+
             <IconChevronDown size={14} className="text-gray-400" />
           </Group>
         </UnstyledButton>
       </Menu.Target>
+
       <Menu.Dropdown className="shadow-xl rounded-xl border-gray-100 p-2">
         <Menu.Label>Profile Settings</Menu.Label>
+
         <Menu.Item leftSection={<IconUser size={16} stroke={1.5} />} className="rounded-lg hover:bg-gray-50">
           My Account
         </Menu.Item>
+
         <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />} className="rounded-lg hover:bg-gray-50">
           Preferences
         </Menu.Item>
+
         <Menu.Divider />
+
         <Menu.Item
           color="red"
           leftSection={<IconLogout size={16} stroke={1.5} />}

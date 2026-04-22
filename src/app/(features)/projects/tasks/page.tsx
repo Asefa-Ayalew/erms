@@ -1,33 +1,36 @@
-'use client'
+"use client";
 
-import React from 'react';
-import { Card, Text, Title } from '@mantine/core';
-import { userInfo } from '@/lib/auth/hooks/user-info';
-import { AuthGuard } from '@/components/auth/AuthGuard';
+import React from "react";
+import { Card, Text, Title } from "@mantine/core";
+import { userInfo } from "@/lib/auth/hooks/user-info";
+import { AuthGuard } from "@/components/auth/AuthGuard";
+import { TaskBoard } from "./components/task-board";
+import { TaskProvider } from "./utils/task-context";
+import {
+  closestCorners,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
 const TaskManagement = () => {
-  const user = userInfo();
-  console.log("User info in TaskManagement page:", user); 
+ const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  }),
+  useSensor(KeyboardSensor)
+);
   return (
-    <AuthGuard allowedRoles={['admin', 'user']}>
-      <div className="space-y-6">
-        <div>
-          <Title order={2}>Task Management</Title>
-          <Text c="dimmed">
-            Signed in as {user.user?.name ?? user.user?.username ?? 'User'}.
-          </Text>
-        </div>
-
-        <Card withBorder radius="md" padding="lg">
-          <div className="space-y-2">
-            <Text fw={600}>Task board components are missing from this workspace.</Text>
-            <Text c="dimmed">
-              The route is fixed and protected now, but the previous task board import cannot be
-              restored until those component files are added back.
-            </Text>
-          </div>
-        </Card>
-      </div>
+    <AuthGuard allowedRoles={["admin"]}>
+      <TaskProvider>
+        <DndContext sensors={sensors} collisionDetection={closestCorners}>
+          <TaskBoard />
+        </DndContext>
+      </TaskProvider>
     </AuthGuard>
   );
 };

@@ -2,12 +2,11 @@
 
 import { ReactNode, createContext, useContext, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { store } from "@/store/store";
-import { useLoginMutation, useMeQuery } from "@/store/api/authApi";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginMutation, useMeQuery } from "@/app/(features)/auth/queries/auth.api";
 import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import type { LoginRequest, UserProfile } from "@/types/auth";
-import type { RootState } from "@/store/store";
+import type { RootState } from "@/lib/core/store/app-store";
 
 type AuthContextValue = {
   user: UserProfile | null;
@@ -88,11 +87,7 @@ function AuthInnerProvider({ children }: { children: ReactNode }) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  return (
-    <Provider store={store}>
-      <AuthInnerProvider>{children}</AuthInnerProvider>
-    </Provider>
-  );
+  return <AuthInnerProvider>{children}</AuthInnerProvider>;
 }
 
 export function useAuthContext() {

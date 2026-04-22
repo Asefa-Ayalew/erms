@@ -22,6 +22,7 @@ export function Signin() {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, isLoading } = userInfo();
 
   const parseLoginError = (error: unknown) => {
@@ -50,11 +51,14 @@ export function Signin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setIsSubmitting(true);
 
     try {
       await login({ username, password });
     } catch (error) {
       setErrorMessage(parseLoginError(error));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,7 +106,14 @@ export function Signin() {
               {errorMessage}
             </Alert>
           ) : null}
-          <Button fullWidth mt="xl" radius="md" type="submit" loading={isLoading}>
+          <Button
+            fullWidth
+            mt="xl"
+            radius="md"
+            type="submit"
+            loading={isSubmitting || isLoading}
+            disabled={!username || !password}
+          >
             Sign in
           </Button>
         </form>
