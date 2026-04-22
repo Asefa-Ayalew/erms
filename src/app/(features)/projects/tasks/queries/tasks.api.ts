@@ -5,14 +5,14 @@ export const tasksApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getTasks: builder.query<Task[], void>({
       query: () => ({
-        url: "/tasks",
+        url: "/api/tasks",
         method: "GET",
       }),
       providesTags: ["Tasks"],
     }),
     createTask: builder.mutation<Task, Partial<Task>>({
       query: (payload) => ({
-        url: "/tasks",
+        url: "/api/tasks",
         method: "POST",
         data: payload,
       }),
@@ -20,7 +20,7 @@ export const tasksApi = baseApi.injectEndpoints({
     }),
     updateTask: builder.mutation<Task, { id: string; payload: Partial<Task> }>({
       query: ({ id, payload }) => ({
-        url: `/tasks/${id}`,
+        url: `/api/tasks/${id}`,
         method: "PATCH",
         data: payload,
       }),
@@ -28,7 +28,7 @@ export const tasksApi = baseApi.injectEndpoints({
     }),
     deleteTask: builder.mutation<{ success: boolean }, string>({
       query: (id) => ({
-        url: `/tasks/${id}`,
+        url: `/api/tasks/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Tasks"],

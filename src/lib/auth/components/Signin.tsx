@@ -112,9 +112,8 @@ export function Signin() {
             radius="md"
             type="submit"
             loading={isSubmitting || isLoading}
-            disabled={!username || !password}
           >
-            Sign in
+            Login
           </Button>
         </form>
       </Paper>

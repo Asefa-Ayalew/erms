@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { loginResponseSchema, userProfileSchema } from "@/types/auth";
-import type { AuthState, LoginRequest, LoginResponse, UserProfile } from "@/types/auth";
+import type {
+  AuthState,
+  ExternalUserDetailResponse,
+  LoginRequest,
+  LoginResponse,
+  UserProfile,
+} from "@/types/auth";
 
 type RootState = {
   auth: AuthState;
@@ -13,23 +19,6 @@ const baseUrl = apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
 type ExternalLoginResponse = {
   accessToken?: string;
   refreshToken?: string;
-};
-
-type ExternalUserDetailResponse = {
-  id?: string;
-  userId?: string;
-  sub?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  name?: string;
-  fullName?: string;
-  firstName?: string;
-  fatherName?: string;
-  lastName?: string;
-  organizationId?: string | null;
-  isActive?: boolean;
-  roles?: string[] | Array<{ name?: string; roleName?: string }>;
 };
 
 function normalizeRoles(roles: ExternalUserDetailResponse["roles"]): string[] {
@@ -80,19 +69,22 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (credentials) => ({
-        url: "/auth/login",
+        url: "/api/auth/login",
         method: "POST",
         body: credentials,
       }),
       transformResponse: (response: unknown) =>
         loginResponseSchema.parse({
-          token: (response as ExternalLoginResponse)?.accessToken ?? "",
+          token:
+            (response as { token?: string })?.token ??
+            (response as ExternalLoginResponse)?.accessToken ??
+            "",
           refreshToken: (response as ExternalLoginResponse)?.refreshToken ?? null,
           user: null,
         }),
     }),
     me: builder.query<UserProfile, void>({
-      query: () => "/auth/user-detail",
+      query: () => "/api/auth/me",
       transformResponse: (response: unknown) =>
         userProfileSchema.parse({
           id:

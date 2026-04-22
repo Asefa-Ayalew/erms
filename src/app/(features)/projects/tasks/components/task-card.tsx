@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Card, Badge, Group, Stack, Text, ActionIcon, Menu, Progress } from '@mantine/core';
+import { Card, Badge, Group, Stack, Text, ActionIcon, Menu } from '@mantine/core';
 import { IconDots, IconTrash, IconEdit, IconCalendar, IconGripVertical } from '@tabler/icons-react';
 import { useDraggable } from '@dnd-kit/core';
 import { Task } from '../../models/task';
@@ -45,12 +45,12 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`border border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:border-gray-300 transition-all duration-200 overflow-hidden group cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 scale-95' : ''}`}
+      className={`border border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:border-gray-300 transition-all duration-200 overflow-hidden group cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-0' : ''}`}
       padding="sm"
     >
       {/* Drag Handle and Priority Bar */}
       <div className="flex items-center gap-2 mb-3">
-        <IconGripVertical size={14} className="text-gray-400 flex-shrink-0" />
+        <IconGripVertical size={14} className="text-gray-400 shrink-0" />
         <div 
           className="h-1 flex-1 rounded-full"
           style={{ backgroundColor: priorityColors[task.priority] }}

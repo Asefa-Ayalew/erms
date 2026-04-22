@@ -1,0 +1,98 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "email": "admin@example.com",
+      "password": "Password123!",
+      "firstName": "Admin",
+      "fatherName": "User",
+      "lastName": "User",
+      "organizationId": "org-1",
+      "isActive": true,
+      "roles": [
+        "admin",
+        "user"
+      ]
+    },
+    {
+      "id": "2",
+      "username": "user1@gmail.com",
+      "email": "employee@example.com",
+      "password": "123456",
+      "firstName": "Team",
+      "fatherName": "Member",
+      "lastName": "Member",
+      "organizationId": "org-1",
+      "isActive": true,
+      "roles": [
+        "user"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Create initial dashboard wireframe",
+      "description": "Design and review first draft of dashboard layout.",
+      "status": "in-progress",
+      "priority": "High",
+      "tags": [
+        "design",
+        "ui"
+      ],
+      "startDate": "2026-04-15",
+      "dueDate": "2026-04-24",
+      "assignee": "Admin User",
+      "badges": [
+        "urgent"
+      ]
+    },
+    {
+      "id": "task-2",
+      "title": "Set up task permissions",
+      "description": "Add role checks for task create/update/delete operations.",
+      "status": "under-review",
+      "priority": "Medium",
+      "tags": [
+        "backend",
+        "auth"
+      ],
+      "startDate": "2026-04-22",
+      "dueDate": "2026-04-30",
+      "assignee": "Team Member",
+      "badges": [
+        "security"
+      ]
+    },
+    {
+      "id": "51d34a9b-b428-4d50-9789-bc9840627eb6",
+      "title": "sgfd",
+      "description": "gsfdg",
+      "status": "in-progress",
+      "priority": "Low",
+      "tags": [
+        "gsfdg",
+        "gfds"
+      ],
+      "startDate": "2026-04-09",
+      "dueDate": "2026-04-03",
+      "assignee": "gsdfg",
+      "badges": []
+    },
+    {
+      "id": "0058fcdc-fd8c-4d58-b195-2397faeee5c6",
+      "title": "sdgfds",
+      "description": "sgfsdgf",
+      "status": "not-started",
+      "priority": "Low",
+      "tags": [
+        "gsfdg"
+      ],
+      "startDate": "2026-04-28",
+      "dueDate": "2026-03-31",
+      "assignee": "gsdfgdsf",
+      "badges": []
+    }
+  ]
+}

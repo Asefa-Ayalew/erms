@@ -15,6 +15,8 @@ export type MenuTree = {
   isExternal?: string;
   children?: MenuTree[];
   pathMatch?: number;
+  /** If set, the item is shown only when the user has at least one of these roles (case-insensitive). If omitted, any authenticated user may see it. */
+  allowedRoles?: string[];
 };
 
 type MenuItemProps = {
@@ -97,9 +99,14 @@ const MenuItem = ({ data, level = 0 }: MenuItemProps) => {
           <UnstyledButton
             onClick={handleToggle}
             className={cn(
-              "w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out hover:bg-blue-50 hover:text-blue-700 mb-2",
-              expanded ? "bg-blue-50 text-blue-800" : "bg-gray-50 text-gray-700",
-              "font-semibold text-sm uppercase tracking-wide border-l-2 border-blue-200"
+              "w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out mb-2",
+              "hover:bg-blue-50 hover:text-blue-700",
+              "font-semibold text-sm uppercase tracking-wide border-l-2 border-blue-200",
+              expanded
+                ? "bg-blue-50 text-blue-700"
+                : isActiveChildren
+                  ? "bg-blue-50 text-blue-700 translate-x-0.5"
+                  : "bg-gray-50 text-gray-700",
             )}
           >
             <Box className="flex items-center gap-3 flex-1 min-w-0">
@@ -131,18 +138,17 @@ const MenuItem = ({ data, level = 0 }: MenuItemProps) => {
           onClick={handleToggle}
           className={cn(
             classes.menuItem,
-            "w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out",
+            "group w-full text-left flex items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 ease-in-out",
             "hover:bg-blue-50 hover:text-blue-700",
             level > 0 && "ml-6",
-            isActive && "bg-blue-100 text-blue-800 font-medium shadow-sm",
-            isActiveChildren && "bg-blue-50 text-blue-700"
+            (isActive || isActiveChildren) && "bg-blue-50 text-blue-700 font-medium translate-x-0.5",
           )}
         >
           <Box className="flex items-center gap-3 flex-1 min-w-0">
             {icon && (
               <Box className={cn(
-                "shrink-0 w-5 h-5",
-                isActive ? "text-blue-600" : "text-gray-500"
+                "shrink-0 w-5 h-5 text-gray-500 group-hover:text-blue-600",
+                (isActive || isActiveChildren) && "text-blue-600",
               )}>
                 {icon}
               </Box>

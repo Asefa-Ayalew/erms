@@ -12,6 +12,10 @@ interface TaskColumnProps {
   title: string;
   count: number;
   tasks: Task[];
+  isSourceColumn?: boolean;
+  isTargetColumn?: boolean;
+  isCrossColumnMove?: boolean;
+  isDragging?: boolean;
   onAddTask: (status: TaskStatus) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (id: string) => void;
@@ -29,6 +33,10 @@ export function TaskColumn({
   title,
   count,
   tasks,
+  isSourceColumn = false,
+  isTargetColumn = false,
+  isCrossColumnMove = false,
+  isDragging = false,
   onAddTask,
   onEditTask,
   onDeleteTask,
@@ -39,7 +47,11 @@ export function TaskColumn({
   return (
     <div 
       ref={setNodeRef}
-      className={`flex-shrink-0 w-96 transition-all duration-200 ${isOver ? 'opacity-75 ring-2 ring-blue-400 rounded-lg' : ''}`}
+      className={`shrink-0 w-96 transition-all duration-200 rounded-lg ${
+        isSourceColumn && isDragging ? 'ring-2 ring-blue-300 bg-blue-100/45' : ''
+      } ${
+        (isOver || isTargetColumn) && isDragging ? 'ring-2 ring-emerald-400 bg-emerald-100/50 shadow-md' : ''
+      }`}
     >
       <div className="flex flex-col h-full">
         {/* Header */}
@@ -66,6 +78,9 @@ export function TaskColumn({
         {/* Cards Container */}
         <div className="flex-1 min-h-0 overflow-y-auto" data-droppable={status}>
           <Stack gap="sm" className="pb-4">
+            {isDragging && isTargetColumn && isCrossColumnMove && (
+              <Card padding="sm" className="border-2 border-dashed border-emerald-300 bg-emerald-50/80 rounded-lg shadow-sm min-h-24" />
+            )}
             {tasks.map((task) => (
               <TaskCard
                 key={task.id}

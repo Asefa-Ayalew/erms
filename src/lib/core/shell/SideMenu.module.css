@@ -25,11 +25,13 @@
   transform: translateX(2px);
 }
 
+/* Keep in sync with :hover; selection uses Tailwind on the same element */
 .menuItem.active {
-  background-color: rgb(219 234 254);
-  color: rgb(30 64 175);
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+  background-color: rgb(239 246 255);
+  color: rgb(37 99 235);
+  font-weight: 500;
+  box-shadow: none;
+  transform: translateX(2px);
 }
 
 .activeIndicator {

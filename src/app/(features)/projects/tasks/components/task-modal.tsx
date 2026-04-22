@@ -18,7 +18,7 @@ import { Task, TaskStatus, TaskPriority } from '../../models/task';
 interface TaskModalProps {
   opened: boolean;
   onClose: () => void;
-  onSubmit: (task: Task) => void;
+  onSubmit: (task: Task) => Promise<void>;
   initialTask?: Task;
   defaultStatus?: TaskStatus;
 }
@@ -64,7 +64,7 @@ export function TaskModal({
     }
   }, [initialTask, defaultStatus, opened]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.title?.trim()) {
       alert('Please enter a task title');
       return;
@@ -83,8 +83,12 @@ export function TaskModal({
       badges: formData.badges || [],
     };
 
-    onSubmit(newTask);
-    onClose();
+    try {
+      await onSubmit(newTask);
+      onClose();
+    } catch {
+      alert('Unable to save task. Please try again.');
+    }
   };
 
   return (

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <rect width="48" height="48" rx="14" fill="url(#erms-grad)"/>
+  <path
+    fill="#fff"
+    fill-opacity="0.95"
+    d="M14 15h7.5v7H14V15zm12.5 0H34v7h-7.5V15zM14 26h7.5v7H14v-7zm12.5 0H34v7h-7.5v-7z"
+  />
+  <defs>
+    <linearGradient id="erms-grad" x1="4" y1="6" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+</svg>

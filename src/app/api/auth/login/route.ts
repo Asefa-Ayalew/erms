@@ -1,96 +1,43 @@
 import { NextResponse } from "next/server";
-
-const EXTERNAL_AUTH_URL = process.env.NEXT_PUBLIC_API_URL ?? "https://lr24j6p3-3001.uks1.devtunnels.ms";
-const LOGIN_URL = EXTERNAL_AUTH_URL.endsWith("/") ? `${EXTERNAL_AUTH_URL}auth/login` : `${EXTERNAL_AUTH_URL}/auth/login`;
-
-type JwtPayload = {
-  sub?: string;
-  username?: string;
-  firstName?: string;
-  fatherName?: string;
-  organizationId?: string | null;
-  roles?: string[];
-  iat?: number;
-  exp?: number;
-};
-
-function decodeJwtPayload(token: string): JwtPayload | null {
-  try {
-    const [, payload] = token.split(".");
-    if (!payload) {
-      return null;
-    }
-
-    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as JwtPayload;
-  } catch {
-    return null;
-  }
-}
+import crypto from "crypto";
+import { buildCookie, createSessionToken, sanitizeUser } from "@/lib/auth/server";
+import { buildExternalUserDetail, readDb } from "@/lib/local-api/db";
 
 export async function POST(request: Request) {
-  const body = await request.text();
-  const headers: Record<string, string> = {
-    "Content-Type": request.headers.get("content-type") ?? "application/json",
-    Accept: request.headers.get("accept") ?? "application/json",
-  };
+  const payload = (await request.json().catch(() => null)) as {
+    username?: string;
+    password?: string;
+  } | null;
 
-  const externalResponse = await fetch(LOGIN_URL, {
-    method: "POST",
-    headers,
-    body,
-    credentials: "include",
-  });
-
-  const responseBody = await externalResponse.text();
-  let normalizedBody = responseBody;
-
-  if (externalResponse.ok) {
-    try {
-      const parsed = JSON.parse(responseBody) as {
-        accessToken?: string;
-        refreshToken?: string;
-      };
-
-      const accessTokenPayload = parsed.accessToken ? decodeJwtPayload(parsed.accessToken) : null;
-      const refreshTokenPayload = parsed.refreshToken ? decodeJwtPayload(parsed.refreshToken) : null;
-
-      if (parsed.accessToken && accessTokenPayload) {
-        const name = [accessTokenPayload.firstName, accessTokenPayload.fatherName]
-          .filter(Boolean)
-          .join(" ")
-          .trim();
-
-        normalizedBody = JSON.stringify({
-          token: parsed.accessToken,
-          refreshToken: parsed.refreshToken ?? null,
-          user: {
-            id: accessTokenPayload.sub ?? "",
-            username: accessTokenPayload.username ?? "",
-            name,
-            roles: Array.isArray(accessTokenPayload.roles) ? accessTokenPayload.roles : [],
-          },
-          decoded: {
-            accessToken: accessTokenPayload,
-            refreshToken: refreshTokenPayload,
-          },
-        });
-      }
-    } catch {
-      normalizedBody = responseBody;
-    }
+  if (!payload?.username || !payload?.password) {
+    return NextResponse.json({ error: "Username and password are required." }, { status: 400 });
   }
 
-  const response = new NextResponse(normalizedBody, {
-    status: externalResponse.status,
-    headers: {
-      "content-type": "application/json",
-    },
+  const db = await readDb();
+  const candidate = db.users.find((user) => {
+    const normalized = payload.username!.trim().toLowerCase();
+    return (
+      (user.username?.toLowerCase() === normalized || user.email?.toLowerCase() === normalized) &&
+      user.password === payload.password
+    );
   });
 
-  const setCookie = externalResponse.headers.get("set-cookie");
-  if (setCookie) {
-    response.headers.set("set-cookie", setCookie);
+  if (!candidate) {
+    return NextResponse.json({ error: "Invalid username or password." }, { status: 401 });
   }
 
+  const userDetail = buildExternalUserDetail(candidate);
+  const sanitized = sanitizeUser({
+    id: userDetail.id,
+    username: userDetail.username,
+    email: userDetail.email,
+    name: userDetail.name,
+    roles: userDetail.roles,
+  });
+
+  const accessToken = createSessionToken(sanitized, 60 * 60);
+  const refreshToken = crypto.randomBytes(32).toString("base64url");
+  const response = NextResponse.json({ accessToken, refreshToken }, { status: 200 });
+  response.headers.set("set-cookie", buildCookie(accessToken));
   return response;
 }

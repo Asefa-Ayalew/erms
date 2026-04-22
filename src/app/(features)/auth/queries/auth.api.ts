@@ -1,25 +1,15 @@
 import { baseApi } from "@/lib/core/store/base-api";
 import { loginResponseSchema, userProfileSchema } from "@/types/auth";
-import type { LoginRequest, LoginResponse, UserProfile } from "@/types/auth";
+import type {
+  ExternalUserDetailResponse,
+  LoginRequest,
+  LoginResponse,
+  UserProfile,
+} from "@/types/auth";
 
 type ExternalLoginResponse = {
   accessToken?: string;
   refreshToken?: string;
-};
-
-type ExternalUserDetailResponse = {
-  id?: string;
-  userId?: string;
-  sub?: string;
-  username?: string;
-  email?: string;
-  phone?: string;
-  name?: string;
-  fullName?: string;
-  firstName?: string;
-  fatherName?: string;
-  lastName?: string;
-  roles?: string[] | Array<{ name?: string; roleName?: string }>;
 };
 
 function normalizeRoles(roles: ExternalUserDetailResponse["roles"]): string[] {
@@ -50,13 +40,16 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (credentials) => ({
-        url: "/auth/login",
+        url: "/api/auth/login",
         method: "POST",
         data: credentials,
       }),
       transformResponse: (response: unknown) =>
         loginResponseSchema.parse({
-          token: (response as ExternalLoginResponse)?.accessToken ?? "",
+          token:
+            (response as { token?: string })?.token ??
+            (response as ExternalLoginResponse)?.accessToken ??
+            "",
           refreshToken: (response as ExternalLoginResponse)?.refreshToken ?? null,
           user: null,
         }),
@@ -64,7 +57,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
     me: builder.query<UserProfile, void>({
       query: () => ({
-        url: "/auth/user-detail",
+        url: "/api/auth/me",
         method: "GET",
       }),
       transformResponse: (response: unknown) =>

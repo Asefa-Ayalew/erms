@@ -18,6 +18,23 @@ export const loginResponseSchema = z.object({
   user: userProfileSchema.nullable().optional(),
 });
 
+export type ExternalUserDetailResponse = {
+  id?: string;
+  userId?: string;
+  sub?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+  name?: string;
+  fullName?: string;
+  firstName?: string;
+  fatherName?: string;
+  lastName?: string;
+  organizationId?: string | null;
+  isActive?: boolean;
+  roles?: string[] | Array<{ name?: string; roleName?: string }>;
+};
+
 export type LoginRequest = z.infer<typeof loginInputSchema>;
 export type UserProfile = z.infer<typeof userProfileSchema>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
