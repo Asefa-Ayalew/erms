@@ -1,2 +1,2 @@
-export * from "./table/entity-table";
+export * from "./table";
 export * from "./models"

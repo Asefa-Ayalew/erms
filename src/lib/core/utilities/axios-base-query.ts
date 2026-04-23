@@ -26,7 +26,9 @@ export const axiosBaseQuery =
       method: FetchArgs["method"];
       data?: unknown;
       headers?: Record<string, string>;
-      params?: Record<string, string | number | boolean | undefined>;
+      params?:
+        | Record<string, string | number | boolean | undefined>
+        | URLSearchParams;
     },
     unknown,
     unknown
@@ -37,11 +39,17 @@ export const axiosBaseQuery =
       const token = state.auth?.token;
       const finalUrl = new URL(url, resolveBaseForUrl(baseUrl));
       if (params) {
-        Object.entries(params).forEach(([key, value]) => {
-          if (value !== undefined) {
-            finalUrl.searchParams.set(key, String(value));
-          }
-        });
+        if (params instanceof URLSearchParams) {
+          params.forEach((value, key) => {
+            finalUrl.searchParams.append(key, value);
+          });
+        } else {
+          Object.entries(params).forEach(([key, value]) => {
+            if (value !== undefined) {
+              finalUrl.searchParams.set(key, String(value));
+            }
+          });
+        }
       }
 
       const response = await fetch(finalUrl.toString(), {

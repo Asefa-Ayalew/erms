@@ -33,6 +33,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import type { CollectionQuery, Filter } from "../models/collection";
@@ -162,17 +163,14 @@ export default function EntityTable<T extends { id?: string | number }>(
     onPaginationChange?.(skip, top);
   };
 
-  const debouncedSearch = useCallback(
-    (searchTerm: string) => {
-      const timeoutId = setTimeout(() => onSearch?.(searchTerm), 1000);
-      return () => clearTimeout(timeoutId);
-    },
-    [onSearch]
-  );
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
-    debouncedSearch(value);
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => onSearch?.(value), 1000);
   };
 
   const handleSorting = (field: string) => {
@@ -258,6 +256,15 @@ export default function EntityTable<T extends { id?: string | number }>(
     }
   }, [params?.id, externalViewMode]);
 
+  useEffect(
+    () => () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    },
+    []
+  );
+
   const handleClick = (item: T) => {
     onSelectItem?.(item);
   };
@@ -313,9 +320,9 @@ export default function EntityTable<T extends { id?: string | number }>(
                       </Menu.Target>
                       <Menu.Dropdown>
                         <div className="p-2">
-                          {availableFilters.map((filter, index) => {
+                          {availableFilters.map((filter) => {
                             return (
-                              <div key={index} className="py-1">
+                              <div key={filter?.value} className="py-1">
                                 <Checkbox
                                   label={filter?.name || filter.value}
                                   checked={selectedFilters?.includes(
@@ -425,7 +432,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                       <>
                         {config?.visibleColumn?.map((col, idx) => (
                           <Table.Th
-                            key={idx}
+                            key={`${String(col?.key)}-${idx}`}
                             style={{
                               cursor: col.hideSort ? "default" : "pointer",
                             }}
@@ -504,7 +511,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                     </Table.Tr>
                   ) : (
                     items?.map((item, idx) => (
-                      <React.Fragment key={idx}>
+                      <React.Fragment key={item?.id ?? idx}>
                         <Table.Tr
                           style={{
                             cursor: renderExpandedContent
@@ -550,7 +557,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                           ) : (
                             <>
                               {config?.visibleColumn?.map((col, colIdx) => (
-                                <Table.Td key={colIdx} className={col?.tdClass}>
+                                <Table.Td key={`${String(col?.key)}-${colIdx}`} className={col?.tdClass}>
                                   {col?.render
                                     ? col?.render(item)
                                     : renderCell(item, col)}
@@ -580,7 +587,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                                       ? config.actions(item)
                                       : (config?.actions ?? [])
                                     ).map((action, index) => (
-                                      <React.Fragment key={index}>
+                                      <React.Fragment key={`${action?.key}-${index}`}>
                                         <Menu.Item
                                           color={
                                             action?.type === "danger"
