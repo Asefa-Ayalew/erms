@@ -22,7 +22,7 @@ import {
   IconTargetArrow,
   IconUsers,
 } from "@tabler/icons-react";
-import { AuthGuard } from "@/components/auth/AuthGuard";
+import { AuthGuard } from "@/lib/auth";
 import { useUserInfo } from "@/lib/auth/hooks/user-info";
 import {
   Bar,

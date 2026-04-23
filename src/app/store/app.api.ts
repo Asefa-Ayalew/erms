@@ -1,1 +1,1 @@
-export { baseApi as apiSlice } from "@/lib/core/store/base-api";
+export { baseApi as apiSlice } from "@/lib/core";

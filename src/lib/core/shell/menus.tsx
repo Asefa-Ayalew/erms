@@ -33,7 +33,7 @@ export const Menus = (): MenuTree[] => {
       label: "Human Resource",
       icon: <IconUsers stroke={1.4} size={18} />,
       isGroup: true,
-      allowedRoles: ["hr"],
+      allowedRoles: ["admin", "user", "hr"],
       children: [
         {
           label: "Employees",
@@ -116,7 +116,7 @@ export const Menus = (): MenuTree[] => {
       label: "Project Management",
       icon: <IconTargetArrow stroke={1.4} size={18} />,
       isGroup: true,
-      allowedRoles: ["admin", "project_manager", "user"],
+      allowedRoles: ["user"],
       children: [
         {
           label: "Projects",

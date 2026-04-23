@@ -12,8 +12,8 @@ import { ColorSchemeToggle } from "@/components/color-scheme-toggle/color-scheme
 import { NotificationPreview } from "./notification-preview";
 import { OrganizationSelector } from "./organization-selector";
 import { UserProfile } from "./user-profile";
-import { cn } from "@/lib/ui/utilities/cn";
 import { Sidebar } from "./Sidebar";
+import { cn } from "../utilities/cn";
 
 type ShellProps = {
   children: ReactNode;

@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { AuthGuard } from "@/components/auth/AuthGuard";
+import { AuthGuard } from "@/lib/auth";
 import { TaskBoard } from "./components/task-board";
 import { TaskProvider } from "./utils/task-context";
 

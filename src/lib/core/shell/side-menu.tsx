@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
-import { cn } from "@/lib/ui/utilities/cn";
+import { cn } from "../utilities/cn";
 export type MenuTree = {
   isGroup?: boolean;
   hasMore?: boolean;

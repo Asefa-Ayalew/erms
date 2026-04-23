@@ -1,8 +1,7 @@
-import { parseLoginResponse } from "@/lib/auth/login";
-import { baseApi } from "@/lib/core/store/base-api";
+import { parseLoginResponse } from "@/lib/auth";
+import { baseApi } from "@/lib/core";
 import type { LoginRequest, LoginResponse } from "@/types/auth";
 
-/** Login: `POST …/auth/login` → tokens; user is filled in `parseLoginResponse` (JWT or API `user`). */
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({

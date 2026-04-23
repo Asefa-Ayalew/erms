@@ -15,7 +15,6 @@ function payload(accessToken: string): Record<string, unknown> | null {
   }
 }
 
-/** Client-side only. The API must still validate the bearer token. */
 export function tokenExpired(accessToken: string, skewMs = 30_000): boolean {
   const p = payload(accessToken);
   if (!p) return true;
@@ -23,7 +22,6 @@ export function tokenExpired(accessToken: string, skewMs = 30_000): boolean {
   return p.exp * 1000 < Date.now() - skewMs;
 }
 
-/** Reads `UserProfile` from access token claims (no signature verification). */
 export function userFromAccessToken(accessToken: string): UserProfile | null {
   if (!accessToken || tokenExpired(accessToken)) return null;
   const p = payload(accessToken);

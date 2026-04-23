@@ -3,7 +3,7 @@
 import { ReactNode, createContext, useContext, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation } from "@/app/(features)/auth/queries/auth.api";
+import { useLoginMutation } from "../api/auth.api";
 import { hasRole } from "@/lib/auth/roles";
 import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import type { LoginRequest, UserProfile } from "@/types/auth";

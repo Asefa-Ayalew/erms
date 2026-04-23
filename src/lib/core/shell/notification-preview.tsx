@@ -1,4 +1,3 @@
-import { cn } from "@/lib/ui/utilities/cn";
 import {
   ActionIcon,
   Indicator,
@@ -17,6 +16,7 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 import { useState } from "react";
+import { cn } from "../utilities/cn";
 
 export function NotificationPreview() {
   const [opened, setOpened] = useState(false);

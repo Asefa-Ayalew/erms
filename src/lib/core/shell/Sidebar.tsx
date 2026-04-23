@@ -6,9 +6,9 @@ import { Box, Text } from "@mantine/core";
 import { IconHierarchy2 } from "@tabler/icons-react";
 import { useMemo } from "react";
 
-import { filterMenusByRole } from "@/lib/auth/menu";
-import { useUserInfo } from "@/lib/auth/hooks/user-info";
-import { useClient } from "@/lib/hooks/useClient";
+import { filterMenusByRole } from "@/lib/auth";
+import { useUserInfo } from "@/lib/auth";
+import { useClient } from "@/lib/hooks";
 import { Menus } from "./menus";
 import { SideMenu } from "./side-menu";
 

@@ -1,0 +1,55 @@
+import { Filter } from "./collection";
+
+export type entityViewMode = "list" | "detail" | "always-list";
+
+export interface EntityConfig<T = void> {
+  key?: string;
+  identity?: string;
+  name?: string;
+  rootUrl?: string;
+  detailUrl?: string;
+  filter?: Filter[][];
+  primaryColumn?: Column<T>;
+  visibleColumn: Column<T>[];
+  detailColumn?: Column<T>[];
+
+  enableAffix?: boolean;
+  showFullScreen?: boolean;
+  showClose?: boolean;
+  hasActions?: boolean;
+  showDetail?: boolean;
+  hasDetail?: boolean;
+  hasBackLink?: boolean;
+  routing?(data: any): void;
+  newAction?(data: any): void;
+  actions?: Actions[] | ((item: T) => Actions[]);
+}
+
+export interface Column<T> {
+  name?: string;
+  key: string | string[];
+  isDate?: boolean;
+  hide?: boolean;
+  print?: boolean;
+  isNumber?: boolean;
+  isBoolean?: boolean;
+  hideSort?: boolean;
+  prefix?: Column<T>;
+  suffix?: Column<T>;
+  // style
+  tdClass?: string;
+  render?: (value: T) => any;
+  className?: (data: T) => string;
+}
+export interface Actions {
+  label: string;
+  icon?: React.ComponentType<any>;
+  size?: string;
+  type?: "primary" | "danger";
+  class?: any;
+  color?: string;
+  key: string;
+  divider?: boolean;
+  isLoading?: boolean;
+  onClick?: (data?: any) => void;
+}

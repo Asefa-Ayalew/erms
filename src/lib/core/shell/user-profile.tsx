@@ -3,8 +3,8 @@
 import { Avatar, Group, Menu, UnstyledButton, Text, Box } from '@mantine/core';
 import { IconLogout, IconSettings, IconUser, IconChevronDown } from '@tabler/icons-react';
 import { useState } from "react";
-import { useClient } from "@/lib/hooks/useClient";
-import { useUserInfo } from "@/lib/auth/hooks/user-info";
+import { useClient } from "@/lib/hooks";
+import { useUserInfo } from "@/lib/auth";
 
 export function UserProfile() {
   const isClient = useClient();

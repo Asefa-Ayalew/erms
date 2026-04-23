@@ -1,5 +1,4 @@
-import { Signin } from '@/lib/auth/components/Signin'
-import React from 'react'
+import { Signin } from '@/lib/auth'
 
 const Login = () => {
   return (
