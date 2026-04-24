@@ -37,11 +37,7 @@ import React, {
   useState,
 } from "react";
 import type { CollectionQuery, Filter } from "../models/collection";
-import {
-  Column,
-  EntityConfig,
-  entityViewMode,
-} from "../models/entity-config";
+import { Column, EntityConfig, entityViewMode } from "../models/entity-config";
 import { useParams, useRouter } from "next/navigation";
 import { HeaderComponent } from "./components/header.component";
 
@@ -80,7 +76,7 @@ interface Props<T> {
 }
 
 export default function EntityTable<T extends { id?: string | number }>(
-  props: Props<T>
+  props: Props<T>,
 ) {
   const {
     config = {
@@ -137,11 +133,11 @@ export default function EntityTable<T extends { id?: string | number }>(
   const params = useParams();
   const router = useRouter();
   const [expandedRow, setExpandedRow] = useState<string | number | undefined>(
-    undefined
+    undefined,
   );
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<entityViewMode>(
-    externalViewMode || "list"
+    externalViewMode || "list",
   );
   const [fullScreen, setFullScreen] = useState<boolean>(false);
 
@@ -175,7 +171,7 @@ export default function EntityTable<T extends { id?: string | number }>(
 
   const handleSorting = (field: string) => {
     const currentOrder = collectionQuery?.orderBy?.find(
-      (o) => o.field === field
+      (o) => o.field === field,
     );
     const newDirection = currentOrder?.direction === "asc" ? "desc" : "asc";
     onOrder?.({ field, direction: newDirection });
@@ -203,13 +199,13 @@ export default function EntityTable<T extends { id?: string | number }>(
     setSelectedFilters(newSelectedFilters);
 
     const activeFilterObjects = availableFilters?.filter((f) =>
-      newSelectedFilters?.includes(f?.value)
+      newSelectedFilters?.includes(f?.value),
     );
 
     const groupedFilters: Filter[][] = [];
     activeFilterObjects?.forEach((filter) => {
       const existingGroup = groupedFilters?.find((group) =>
-        group?.some((f) => f?.value === filter?.value)
+        group?.some((f) => f?.value === filter?.value),
       );
       if (existingGroup) {
         existingGroup.push(filter);
@@ -243,7 +239,7 @@ export default function EntityTable<T extends { id?: string | number }>(
 
       router.push(finalPath);
     },
-    [config, router, view]
+    [config, router, view],
   );
 
   useEffect(() => {
@@ -262,12 +258,8 @@ export default function EntityTable<T extends { id?: string | number }>(
         clearTimeout(searchTimeoutRef.current);
       }
     },
-    []
+    [],
   );
-
-  const handleClick = (item: T) => {
-    onSelectItem?.(item);
-  };
 
   return (
     <div className="flex space-x-4">
@@ -326,12 +318,12 @@ export default function EntityTable<T extends { id?: string | number }>(
                                 <Checkbox
                                   label={filter?.name || filter.value}
                                   checked={selectedFilters?.includes(
-                                    filter.value
+                                    filter.value,
                                   )}
                                   onChange={(e) =>
                                     handleFilterChange(
                                       filter.value,
-                                      e.currentTarget.checked
+                                      e.currentTarget.checked,
                                     )
                                   }
                                   size="sm"
@@ -408,7 +400,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                                 size={14}
                                 color={
                                   getSortDirection(
-                                    config?.primaryColumn?.key as string
+                                    config?.primaryColumn?.key as string,
                                   ) === "asc"
                                     ? "#1f2937"
                                     : "#9ca3af"
@@ -418,7 +410,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                                 size={14}
                                 color={
                                   getSortDirection(
-                                    config?.primaryColumn?.key as string
+                                    config?.primaryColumn?.key as string,
                                   ) === "desc"
                                     ? "#1f2937"
                                     : "#9ca3af"
@@ -557,7 +549,10 @@ export default function EntityTable<T extends { id?: string | number }>(
                           ) : (
                             <>
                               {config?.visibleColumn?.map((col, colIdx) => (
-                                <Table.Td key={`${String(col?.key)}-${colIdx}`} className={col?.tdClass}>
+                                <Table.Td
+                                  key={`${String(col?.key)}-${colIdx}`}
+                                  className={col?.tdClass}
+                                >
                                   {col?.render
                                     ? col?.render(item)
                                     : renderCell(item, col)}
@@ -576,10 +571,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                                 >
                                   <Menu.Target>
                                     <ActionIcon variant="subtle" size="sm">
-                                      <IconDotsVertical
-                                        size={16}
-                                        onClick={() => handleClick(item)}
-                                      />
+                                      <IconDotsVertical size={16} />
                                     </ActionIcon>
                                   </Menu.Target>
                                   <Menu.Dropdown>
@@ -587,7 +579,9 @@ export default function EntityTable<T extends { id?: string | number }>(
                                       ? config.actions(item)
                                       : (config?.actions ?? [])
                                     ).map((action, index) => (
-                                      <React.Fragment key={`${action?.key}-${index}`}>
+                                      <React.Fragment
+                                        key={`${action?.key}-${index}`}
+                                      >
                                         <Menu.Item
                                           color={
                                             action?.type === "danger"
@@ -595,10 +589,7 @@ export default function EntityTable<T extends { id?: string | number }>(
                                               : undefined
                                           }
                                           onClick={() =>
-                                            handleAction?.(
-                                              { key: action?.key },
-                                              item
-                                            )
+                                            action?.onClick?.(item)
                                           }
                                           leftSection={
                                             action?.icon &&

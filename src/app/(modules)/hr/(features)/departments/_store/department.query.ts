@@ -13,12 +13,33 @@ export const departmentQuery = apiSlice.injectEndpoints({
         method: "GET",
         params: collectionQueryBuilder(data),
       }),
-      providesTags: ["DepartmentInfo"],
+      providesTags: ["Department"],
     }),
 
-    getDepartments: builder.query<Collection<Department>, CollectionQuery>({
-      query: (data: CollectionQuery) => ({
+    getDepartments: builder.query<any, any>({
+      query: () => ({
         url: DEPARTMENT_ENDPOINT.list,
+        method: "GET",
+      }),
+      providesTags: ["Departments"],
+      async onQueryStarted(param, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (data) {
+            departmentCollection = param;
+          }
+        } catch {
+          // no-op
+        }
+      },
+    }),
+
+    getArchivedDepartments: builder.query<
+      Collection<Department>,
+      CollectionQuery
+    >({
+      query: (data: CollectionQuery) => ({
+        url: DEPARTMENT_ENDPOINT.listArchivedDepartments,
         method: "GET",
         params: collectionQueryBuilder(data),
       }),
@@ -35,27 +56,6 @@ export const departmentQuery = apiSlice.injectEndpoints({
       },
     }),
 
-      getArchivedDepartments: builder.query<Collection<Department>, CollectionQuery>(
-          {
-            query: (data: CollectionQuery) => ({
-              url: DEPARTMENT_ENDPOINT.listArchivedDepartments,
-              method: "GET",
-              params: collectionQueryBuilder(data),
-            }),
-            providesTags: ["Departments"],
-            async onQueryStarted(param, { queryFulfilled }) {
-              try {
-                const { data } = await queryFulfilled;
-                if (data) {
-                  departmentCollection = param;
-                }
-              } catch {
-                // no-op
-              }
-            },
-          }
-        ),
-
     createDepartment: builder.mutation<Department, Department>({
       query: (newData: Department) => ({
         url: `${DEPARTMENT_ENDPOINT.create}`,
@@ -63,58 +63,58 @@ export const departmentQuery = apiSlice.injectEndpoints({
         data: newData,
       }),
       invalidatesTags: ["Departments"],
-      async onQueryStarted(param, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data && departmentCollection) {
-            dispatch(
-              departmentQuery.util.updateQueryData(
-                "getDepartments",
-                departmentCollection,
-                (draft) => {
-                  if (data) {
-                    draft.data.push(data);
-                    draft.count += 1;
-                  }
-                }
-              )
-            );
-          }
-        } catch {
-          // no-op
-        }
-      },
+      // async onQueryStarted(param, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data } = await queryFulfilled;
+      //     if (data && departmentCollection) {
+      //       dispatch(
+      //         departmentQuery.util.updateQueryData(
+      //           "getDepartments",
+      //           departmentCollection,
+      //           (draft) => {
+      //             if (data) {
+      //               draft.data.push(data);
+      //               draft.count += 1;
+      //             }
+      //           },
+      //         ),
+      //       );
+      //     }
+      //   } catch {
+      //     // no-op
+      //   }
+      // },
     }),
 
     updateDepartment: builder.mutation<Department, Department>({
       query: (newData: Department) => ({
-        url: `${DEPARTMENT_ENDPOINT.update}`,
-        method: "PUT",
+        url: `${DEPARTMENT_ENDPOINT.update}/${newData.id}`,
+        method: "PATCH",
         data: newData,
       }),
-      invalidatesTags: ["DepartmentInfo", "Departments"],
-      async onQueryStarted(param, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data && departmentCollection) {
-            dispatch(
-              departmentQuery.util.updateQueryData(
-                "getDepartments",
-                departmentCollection,
-                (draft) => {
-                  if (data) {
-                    draft.data = draft?.data?.map((item) =>
-                      item.id === data.id ? data : item
-                    );
-                  }
-                }
-              )
-            );
-          }
-        } catch {
-          // no-op
-        }
-      },
+      invalidatesTags: ["Departments"],
+      // async onQueryStarted(param, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data } = await queryFulfilled;
+      //     if (data && departmentCollection) {
+      //       dispatch(
+      //         departmentQuery.util.updateQueryData(
+      //           "getDepartments",
+      //           departmentCollection,
+      //           (draft) => {
+      //             if (data) {
+      //               draft.data = draft?.data?.map((item) =>
+      //                 item.id === data.id ? data : item,
+      //               );
+      //             }
+      //           },
+      //         ),
+      //       );
+      //     }
+      //   } catch {
+      //     // no-op
+      //   }
+      // },
     }),
     archiveDepartment: builder.mutation<Department, CollectionQuery>({
       query: (data: CollectionQuery) => ({
@@ -122,31 +122,31 @@ export const departmentQuery = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
 
-      async onQueryStarted(param, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data && departmentCollection) {
-            dispatch(
-              departmentQuery.util.updateQueryData(
-                "getDepartments",
-                departmentCollection,
-                (draft) => {
-                  if (data) {
-                    draft.data = draft?.data?.map((department) => {
-                      if (department.id === data.id) return data;
-                      else {
-                        return department;
-                      }
-                    });
-                  }
-                }
-              )
-            );
-          }
-        } catch {
-          // no-op
-        }
-      },
+      // async onQueryStarted(param, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data } = await queryFulfilled;
+      //     if (data && departmentCollection) {
+      //       dispatch(
+      //         departmentQuery.util.updateQueryData(
+      //           "getDepartments",
+      //           departmentCollection,
+      //           (draft) => {
+      //             if (data) {
+      //               draft.data = draft?.data?.map((department) => {
+      //                 if (department.id === data.id) return data;
+      //                 else {
+      //                   return department;
+      //                 }
+      //               });
+      //             }
+      //           },
+      //         ),
+      //       );
+      //     }
+      //   } catch {
+      //     // no-op
+      //   }
+      // },
     }),
     restoreDepartment: builder.mutation<Department, CollectionQuery>({
       query: (data: CollectionQuery) => ({
@@ -154,28 +154,28 @@ export const departmentQuery = apiSlice.injectEndpoints({
         method: "POST",
       }),
 
-      async onQueryStarted(param, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data && departmentCollection) {
-            dispatch(
-              departmentQuery.util.updateQueryData(
-                "getDepartments",
-                departmentCollection,
-                (draft) => {
-                  if (data) {
-                    draft.data = draft?.data?.map((department) =>
-                      department.id === data.id ? data : department
-                    );
-                  }
-                }
-              )
-            );
-          }
-        } catch {
-          // no-op
-        }
-      },
+      // async onQueryStarted(param, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data } = await queryFulfilled;
+      //     if (data && departmentCollection) {
+      //       dispatch(
+      //         departmentQuery.util.updateQueryData(
+      //           "getDepartments",
+      //           departmentCollection,
+      //           (draft) => {
+      //             if (data) {
+      //               draft.data = draft?.data?.map((department) =>
+      //                 department.id === data.id ? data : department,
+      //               );
+      //             }
+      //           },
+      //         ),
+      //       );
+      //     }
+      //   } catch {
+      //     // no-op
+      //   }
+      // },
     }),
     deleteDepartment: builder.mutation<boolean, string>({
       query: (id: string) => ({
@@ -183,29 +183,29 @@ export const departmentQuery = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: ["Departments"],
-      async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (data && departmentCollection) {
-            dispatch(
-              departmentQuery.util.updateQueryData(
-                "getDepartments",
-                departmentCollection,
-                (draft) => {
-                  if (data) {
-                    draft.data = draft?.data?.filter(
-                      (item) => item.id?.toString() !== id
-                    );
-                    draft.count -= 1;
-                  }
-                }
-              )
-            );
-          }
-        } catch {
-          // no-op
-        }
-      },
+      // async onQueryStarted(id, { dispatch, queryFulfilled }) {
+      //   try {
+      //     const { data } = await queryFulfilled;
+      //     if (data && departmentCollection) {
+      //       dispatch(
+      //         departmentQuery.util.updateQueryData(
+      //           "getDepartments",
+      //           departmentCollection,
+      //           (draft) => {
+      //             if (data) {
+      //               draft.data = draft?.data?.filter(
+      //                 (item) => item.id?.toString() !== id,
+      //               );
+      //               draft.count -= 1;
+      //             }
+      //           },
+      //         ),
+      //       );
+      //     }
+      //   } catch {
+      //     // no-op
+      //   }
+      // },
     }),
   }),
 

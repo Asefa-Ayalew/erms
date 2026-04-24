@@ -1,9 +1,9 @@
 export const DEPARTMENT_ENDPOINT = {
-  list: "/departments/get-departments",
+  list: "/departments",
   listArchivedDepartments: "/departments/get-archived-departments",
-  create: "/departments/create-department",
+  create: "/departments",
   detail: "/departments/get-department",
-  update: "/departments/update-department",
+  update: "/departments",
   delete: "/departments/delete-department",
   archive: "/departments/archive-department",
   restore: "/departments/restore-department",

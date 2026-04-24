@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Shell } from "@/lib/core";
+import { Notifications } from "@mantine/notifications";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,12 +30,14 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <head>
         <ColorSchemeScript />
       </head>
       <body className="min-h-full flex flex-col">
         <Providers>
+          <Notifications limit={5} position="bottom-right" />
           <Shell>{children}</Shell>
         </Providers>
       </body>
