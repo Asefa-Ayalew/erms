@@ -33,9 +33,9 @@ export const Sidebar = () => {
           href="/dashboard"
           className="flex items-center gap-3 no-underline"
         >
-         <Box className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-linear-to-br from-blue-600 to-blue-500 shadow-sm shadow-blue-200/50">
-  <IconHierarchy2  size={20} stroke={2} className="text-white" />
-</Box>
+          <Box className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-linear-to-br from-blue-600 to-blue-500 shadow-sm shadow-blue-200/50">
+            <IconHierarchy2 size={20} stroke={2} className="text-white" />
+          </Box>
           <Box>
             <Text
               size="lg"

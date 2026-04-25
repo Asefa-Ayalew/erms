@@ -6,7 +6,13 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useLazyGetDepartmentsQuery } from "../../departments/_store/department.query";
-import type { Employee, EmployeeGender, EmploymentStatus } from "../../../models/employee.model";
+import type {
+  Employee,
+  EmployeeGender,
+  EmploymentStatus,
+} from "../../../models/employee.model";
+import { Department } from "../../../models/department.model";
+import { IconDeviceFloppy, IconTrash } from "@tabler/icons-react";
 
 const employeeSchema = z.object({
   id: z.string().optional(),
@@ -21,11 +27,11 @@ const employeeSchema = z.object({
   phone: z.string().optional(),
   email: z.union([z.literal(""), z.string().email()]),
   hireDate: z.string().optional(),
-  employmentStatus: z.enum([
-    "active",
-    "inactive",
-    "terminated",
-  ] as [EmploymentStatus, EmploymentStatus, EmploymentStatus]),
+  employmentStatus: z.enum(["active", "inactive", "terminated"] as [
+    EmploymentStatus,
+    EmploymentStatus,
+    EmploymentStatus,
+  ]),
   departmentId: z.string().optional(),
   positionId: z.string().optional(),
 });
@@ -95,7 +101,8 @@ export default function EmployeeForm({
       phone: defaultValues.phone ?? "",
       email: defaultValues.email ?? "",
       hireDate: defaultValues.hireDate ?? "",
-      employmentStatus: (defaultValues.employmentStatus as EmploymentStatus) ?? "active",
+      employmentStatus:
+        (defaultValues.employmentStatus as EmploymentStatus) ?? "active",
       departmentId: defaultValues.departmentId ?? "",
       positionId: defaultValues.positionId ?? "",
     });
@@ -111,7 +118,10 @@ export default function EmployeeForm({
 
   const deptOptions =
     Array.isArray(departments?.data) && departments.data.length
-      ? departments.data.map((d) => ({ value: String(d.id), label: d.name ?? String(d.id) }))
+      ? departments.data.map((d: Department) => ({
+          value: String(d.id),
+          label: d.name ?? String(d.id),
+        }))
       : [];
 
   return (
@@ -121,8 +131,16 @@ export default function EmployeeForm({
       })}
     >
       <Stack gap="md">
-        <TextInput label="Employee code" {...form.register("employeeCode")} error={form.formState.errors.employeeCode?.message} />
-        <TextInput label="First name" {...form.register("firstName")} error={form.formState.errors.firstName?.message} />
+        <TextInput
+          label="Employee code"
+          {...form.register("employeeCode")}
+          error={form.formState.errors.employeeCode?.message}
+        />
+        <TextInput
+          label="First name"
+          {...form.register("firstName")}
+          error={form.formState.errors.firstName?.message}
+        />
         <TextInput label="Father name" {...form.register("fatherName")} />
         <TextInput label="Grandfather name" {...form.register("gFatherName")} />
         <TextInput label="TIN" {...form.register("tin")} />
@@ -141,10 +159,22 @@ export default function EmployeeForm({
             />
           )}
         />
-        <TextInput type="date" label="Date of birth" {...form.register("dateOfBirth")} />
+        <TextInput
+          type="date"
+          label="Date of birth"
+          {...form.register("dateOfBirth")}
+        />
         <TextInput label="Phone" {...form.register("phone")} />
-        <TextInput label="Email" {...form.register("email")} error={form.formState.errors.email?.message} />
-        <TextInput type="date" label="Hire date" {...form.register("hireDate")} />
+        <TextInput
+          label="Email"
+          {...form.register("email")}
+          error={form.formState.errors.email?.message}
+        />
+        <TextInput
+          type="date"
+          label="Hire date"
+          {...form.register("hireDate")}
+        />
         <Controller
           name="employmentStatus"
           control={form.control}
@@ -175,19 +205,34 @@ export default function EmployeeForm({
             />
           )}
         />
-        <TextInput label="Position ID" placeholder="e.g. role or UUID" {...form.register("positionId")} />
-        <Group justify="space-between" mt="md">
+        <TextInput
+          label="Position ID"
+          placeholder="e.g. role or UUID"
+          {...form.register("positionId")}
+        />
+        <Group justify="flex-start" gap={8} mt="md">
+          <Group>
+            <Button
+              color="blue"
+              type="submit"
+              loading={loading}
+              disabled={mode === "edit" && !isDirty}
+              leftSection={<IconDeviceFloppy size={16} />}
+            >
+              {mode === "edit" ? "Update" : "Save"}
+            </Button>
+          </Group>
           {mode === "edit" && onDelete && (
-            <Button type="button" color="red" variant="light" loading={deleting} onClick={onDelete}>
+            <Button
+              type="button"
+              color="red"
+              loading={deleting}
+              onClick={onDelete}
+              leftSection={<IconTrash size={16} />}
+            >
               Delete
             </Button>
           )}
-          <div />
-          <Group>
-            <Button type="submit" loading={loading} disabled={mode === "edit" && !isDirty}>
-              {mode === "edit" ? "Save changes" : "Create employee"}
-            </Button>
-          </Group>
         </Group>
       </Stack>
     </form>

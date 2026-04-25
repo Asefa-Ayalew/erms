@@ -12,7 +12,7 @@ const statusColor: Record<EmploymentStatus, string> = {
 export default function EmployeePreview({ data }: { data?: Partial<Employee> | null }) {
   const label = (text: string, value: string | undefined) => (
     <div>
-      <Text size="xs" c="dimmed" tt="uppercase" fw={600}>
+      <Text size="xs" c="dimmed"  fw={600}>
         {text}
       </Text>
       <Text size="sm">{value && String(value).trim() !== "" ? value : "—"}</Text>
@@ -24,7 +24,7 @@ export default function EmployeePreview({ data }: { data?: Partial<Employee> | n
       <Group justify="space-between" mb="md">
         <Title order={5}>Preview</Title>
         {data?.employmentStatus && (
-          <Badge color={statusColor[data.employmentStatus as EmploymentStatus] ?? "blue"}>
+          <Badge className="!lowercase" color={statusColor[data.employmentStatus as EmploymentStatus] ?? "blue"}>
             {data.employmentStatus}
           </Badge>
         )}
@@ -41,8 +41,6 @@ export default function EmployeePreview({ data }: { data?: Partial<Employee> | n
         {label("Phone", data?.phone)}
         {label("Email", data?.email)}
         {label("Hire date", data?.hireDate)}
-        {label("Department ID", data?.departmentId)}
-        {label("Position ID", data?.positionId)}
       </SimpleGrid>
     </Card>
   );
