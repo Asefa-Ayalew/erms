@@ -50,7 +50,7 @@ export const collectionQueryBuilder = (
         setParam("sortBy", first.field);
       }
       const dir = (first?.direction ?? "asc").toLowerCase();
-      setParam("order", dir === "desc" ? "DESC" : "ASC");
+      setParam("direction", dir === "desc" ? "desc" : "asc");
     } else {
       request.sortBy.forEach((sortBy, index) => {
         const orderKeys: (keyof Order)[] = ["field", "direction"];

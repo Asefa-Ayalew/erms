@@ -22,7 +22,6 @@ import { MenuTree } from "./side-menu";
 
 export const Menus = (): MenuTree[] => {
   return [
-    // Dashboard
     {
       label: "Dashboard",
       icon: <IconHome stroke={1.4} size={18} />,
@@ -116,7 +115,7 @@ export const Menus = (): MenuTree[] => {
       label: "Project Management",
       icon: <IconTargetArrow stroke={1.4} size={18} />,
       isGroup: true,
-      allowedRoles: ["user"],
+      allowedRoles: ["admin", "project-manager", "user"],
       children: [
         {
           label: "Projects",

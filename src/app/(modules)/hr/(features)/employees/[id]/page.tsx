@@ -108,7 +108,6 @@ export default function EmployeeDetailPage() {
       <Title order={5} className="mb-4 text-gray-800">
         {isNew ? "New employee" : "Edit employee"}
       </Title>
-      <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
         <Card withBorder padding="md">
           <EmployeeForm
             mode={isNew ? "new" : "edit"}
@@ -120,8 +119,6 @@ export default function EmployeeDetailPage() {
             deleting={deleting}
           />
         </Card>
-        <EmployeePreview data={previewData} />
-      </SimpleGrid>
     </div>
   );
 }

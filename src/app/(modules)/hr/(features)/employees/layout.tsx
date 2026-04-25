@@ -40,7 +40,6 @@ export default function EmployeesLayoutPage({
     getEmployees({
       ...collectionQuery,
       withArchived: view === "archived",
-      // includes: ["department", "position"],
     });
   }, [getEmployees, collectionQuery, view]);
 

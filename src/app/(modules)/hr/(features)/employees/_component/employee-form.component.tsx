@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Group, Select, TextInput, Stack } from "@mantine/core";
+import { Button, Group, Select, TextInput, Stack, SimpleGrid } from "@mantine/core";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -130,21 +130,25 @@ export default function EmployeeForm({
         onSubmit(values);
       })}
     >
-      <Stack gap="md">
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
         <TextInput
           label="Employee code"
           {...form.register("employeeCode")}
           error={form.formState.errors.employeeCode?.message}
         />
+
         <TextInput
           label="First name"
           {...form.register("firstName")}
           error={form.formState.errors.firstName?.message}
         />
+
         <TextInput label="Father name" {...form.register("fatherName")} />
         <TextInput label="Grandfather name" {...form.register("gFatherName")} />
+
         <TextInput label="TIN" {...form.register("tin")} />
         <TextInput label="FAN" {...form.register("fan")} />
+
         <Controller
           name="gender"
           control={form.control}
@@ -159,22 +163,27 @@ export default function EmployeeForm({
             />
           )}
         />
+
         <TextInput
           type="date"
           label="Date of birth"
           {...form.register("dateOfBirth")}
         />
+
         <TextInput label="Phone" {...form.register("phone")} />
+
         <TextInput
           label="Email"
           {...form.register("email")}
           error={form.formState.errors.email?.message}
         />
+
         <TextInput
           type="date"
           label="Hire date"
           {...form.register("hireDate")}
         />
+
         <Controller
           name="employmentStatus"
           control={form.control}
@@ -190,6 +199,7 @@ export default function EmployeeForm({
             />
           )}
         />
+
         <Controller
           name="departmentId"
           control={form.control}
@@ -205,36 +215,36 @@ export default function EmployeeForm({
             />
           )}
         />
+
         <TextInput
           label="Position ID"
           placeholder="e.g. role or UUID"
           {...form.register("positionId")}
         />
-        <Group justify="flex-start" gap={8} mt="md">
-          <Group>
-            <Button
-              color="blue"
-              type="submit"
-              loading={loading}
-              disabled={mode === "edit" && !isDirty}
-              leftSection={<IconDeviceFloppy size={16} />}
-            >
-              {mode === "edit" ? "Update" : "Save"}
-            </Button>
-          </Group>
-          {mode === "edit" && onDelete && (
-            <Button
-              type="button"
-              color="red"
-              loading={deleting}
-              onClick={onDelete}
-              leftSection={<IconTrash size={16} />}
-            >
-              Delete
-            </Button>
-          )}
-        </Group>
-      </Stack>
+      </SimpleGrid>
+
+      <Group justify="flex-start" gap={8} mt="md">
+        <Button
+          type="submit"
+          loading={loading}
+          disabled={mode === "edit" && !isDirty}
+          leftSection={<IconDeviceFloppy size={16} />}
+        >
+          {mode === "edit" ? "Update" : "Save"}
+        </Button>
+
+        {mode === "edit" && onDelete && (
+          <Button
+            type="button"
+            color="red"
+            loading={deleting}
+            onClick={onDelete}
+            leftSection={<IconTrash size={16} />}
+          >
+            Delete
+          </Button>
+        )}
+      </Group>
     </form>
   );
 }
