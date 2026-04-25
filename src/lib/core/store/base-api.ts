@@ -9,6 +9,14 @@ const apiUrl =
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: axiosBaseQuery({ baseUrl: apiUrl }),
-  tagTypes: ["Tasks", "Projects", "ManagerOptions", "Departments", "Department"],
+  tagTypes: [
+    "Tasks",
+    "Projects",
+    "ManagerOptions",
+    "Departments",
+    "Department",
+    "Employees",
+    "Employee",
+  ],
   endpoints: () => ({}),
 });

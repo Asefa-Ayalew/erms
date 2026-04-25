@@ -60,7 +60,7 @@ interface Props<T> {
   view?: "list" | "archived";
   onViewChange?: (view: "list" | "archived") => void;
 
-  onPaginationChange?: (skip: number, top: number) => void;
+  onPaginationChange?: (skip: number, take: number) => void;
   onSearch?: FunctionType;
   onFilterChange?: (filters: Filter[][]) => void;
   onOrder?: (order: { field: string; direction: "asc" | "desc" }) => void;
@@ -111,7 +111,7 @@ export default function EntityTable<T extends { id?: string | number }>(
     items = [],
     total = 0,
     itemsLoading = false,
-    collectionQuery = { top: 10, skip: 0 },
+    collectionQuery = { take: 10, skip: 0 },
     defaultPageSize = 10,
     pageSizeOptions = [3, 5, 10, 20, 30, 50, 100],
     viewMode: externalViewMode,
@@ -143,20 +143,20 @@ export default function EntityTable<T extends { id?: string | number }>(
 
   const availableFilters = config?.filter?.flat() || [];
 
-  const pageSize = collectionQuery?.top || defaultPageSize;
+  const pageSize = collectionQuery?.take || defaultPageSize;
   const currentPage = Math.floor((collectionQuery?.skip || 0) / pageSize) + 1;
 
   const handlePaginationChange = (page: number) => {
     const skip = (page - 1) * pageSize;
-    const top = pageSize;
-    onPaginationChange?.(skip, top);
+    const take = pageSize;
+    onPaginationChange?.(skip, take);
   };
 
   const handlePageSizeChange = (value: string | null) => {
     const newSize = Number(value || defaultPageSize);
     const skip = (currentPage - 1) * newSize;
-    const top = currentPage * newSize;
-    onPaginationChange?.(skip, top);
+    const take = currentPage * newSize;
+    onPaginationChange?.(skip, take);
   };
 
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -170,7 +170,7 @@ export default function EntityTable<T extends { id?: string | number }>(
   };
 
   const handleSorting = (field: string) => {
-    const currentOrder = collectionQuery?.orderBy?.find(
+    const currentOrder = collectionQuery?.sortBy?.find(
       (o) => o.field === field,
     );
     const newDirection = currentOrder?.direction === "asc" ? "desc" : "asc";
@@ -178,7 +178,7 @@ export default function EntityTable<T extends { id?: string | number }>(
   };
 
   const getSortDirection = (field: string): "asc" | "desc" | undefined => {
-    return collectionQuery?.orderBy?.find((o) => o.field === field)?.direction;
+    return collectionQuery?.sortBy?.find((o) => o.field === field)?.direction;
   };
 
   const handleRowClick = (item: T) => {
@@ -336,37 +336,43 @@ export default function EntityTable<T extends { id?: string | number }>(
                       </Menu.Dropdown>
                     </Menu>
                   )}
-                  <div className="flex gap-2">
-                    <Tooltip label="Show List" withArrow position="bottom">
-                      <ActionIcon
-                        variant="light"
-                        size="lg"
-                        onClick={() => onViewChange?.("list")}
-                        className={`transition-colors rounded-md ${
-                          view === "list"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600"
-                        }`}
-                      >
-                        <IconList size={20} />
-                      </ActionIcon>
-                    </Tooltip>
+                  {showArchivedList && (
+                    <div className="flex gap-2">
+                      <Tooltip label="Show List" withArrow position="bottom">
+                        <ActionIcon
+                          variant="light"
+                          size="lg"
+                          onClick={() => onViewChange?.("list")}
+                          className={`transition-colors rounded-md ${
+                            view === "list"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+                          }`}
+                        >
+                          <IconList size={20} />
+                        </ActionIcon>
+                      </Tooltip>
 
-                    <Tooltip label="Show Archived" withArrow position="bottom">
-                      <ActionIcon
-                        variant="light"
-                        size="lg"
-                        onClick={() => onViewChange?.("archived")}
-                        className={`transition-colors rounded-md ${
-                          view === "archived"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600"
-                        }`}
+                      <Tooltip
+                        label="Show Archived"
+                        withArrow
+                        position="bottom"
                       >
-                        <IconArchive size={20} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </div>
+                        <ActionIcon
+                          variant="light"
+                          size="lg"
+                          onClick={() => onViewChange?.("archived")}
+                          className={`transition-colors rounded-md ${
+                            view === "archived"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 text-gray-500 hover:bg-blue-100 hover:text-blue-600"
+                          }`}
+                        >
+                          <IconArchive size={20} />
+                        </ActionIcon>
+                      </Tooltip>
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -117,7 +117,7 @@ export function Shell({ children }: ShellProps): ReactNode {
                 {children}
               </Box>
             ) : (
-              <Box className="max-w-7xl mx-auto h-full rounded-2xl bg-white shadow-sm border border-gray-100 p-6 lg:p-8">
+              <Box className="max-w-7xl mx-auto min-h-screen h-auto rounded-2xl bg-gray-50 shadow-sm border border-gray-100 p-2 lg:p-3">
                 {children}
               </Box>
             )}

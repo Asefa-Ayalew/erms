@@ -3,9 +3,11 @@ export interface CollectionQuery {
   search?: string;
   searchFrom?: string[];
   skip?: number;
-  top?: number;
+  take?: number;
   index?: number;
-  orderBy?: Order[];
+  /** When true, first sort is sent as flat `sortBy` + `order` (ASC|DESC) query params */
+  useFlatSort?: boolean;
+  sortBy?: Order[];
   groupBy?: string[];
   filter?: Filter[][];
   select?: string[];

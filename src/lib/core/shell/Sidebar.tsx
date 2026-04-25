@@ -54,7 +54,7 @@ export const Sidebar = () => {
         <SideMenu menu={menu} />
       </Box>
 
-      <Box className="flex flex-col gap-3 border-t border-gray-100 px-5 py-4 bg-white text-xs text-gray-500 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+      {/* <Box className="flex flex-col gap-3 border-t border-gray-100 px-5 py-4 bg-white text-xs text-gray-500 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
         <Box className="flex items-center justify-between">
           <Box className="flex items-center gap-2">
             <Box
@@ -76,7 +76,7 @@ export const Sidebar = () => {
             Powered by Supersoft
           </Text>
         </Box>
-      </Box>
+      </Box> */}
     </>
   );
 };

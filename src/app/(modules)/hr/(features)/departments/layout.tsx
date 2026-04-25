@@ -36,7 +36,7 @@ export default function DepartmentListPage({
   const [view, setView] = useState<"list" | "archived">("list");
   const [collectionQuery, setCollectionQuery] = useState<CollectionQuery>({
     skip: 0,
-    top: 10,
+    take: 10,
   });
   const [opened, { open, close }] = useDisclosure(false);
   const [openedView, { open: openView, close: closeView }] =

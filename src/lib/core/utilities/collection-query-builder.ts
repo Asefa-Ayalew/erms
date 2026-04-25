@@ -28,9 +28,9 @@ export const collectionQueryBuilder = (
     setParam(skip, request.skip.toString());
   }
 
-  if (request?.top !== undefined) {
-    const top = type === "strapi" ? "_limit" : "top";
-    setParam(top, request.top.toString());
+  if (request?.take !== undefined) {
+    const take = type === "strapi" ? "_limit" : "take";
+    setParam(take, request.take.toString());
   }
 
   if (request?.search !== undefined) {
@@ -43,16 +43,25 @@ export const collectionQueryBuilder = (
     });
   }
 
-  if (request?.orderBy?.length) {
-    request.orderBy.forEach((orderBy, index) => {
-      const orderKeys: (keyof Order)[] = ["field", "direction"];
-      orderKeys.forEach((key) => {
-        const value = orderBy[key];
-        if (value !== undefined) {
-          setParam(`orderBy[${index}][${key}]`, encodeURIComponent(value));
-        }
+  if (request?.sortBy?.length) {
+    if (request.useFlatSort) {
+      const first = request.sortBy[0];
+      if (first?.field) {
+        setParam("sortBy", first.field);
+      }
+      const dir = (first?.direction ?? "asc").toLowerCase();
+      setParam("order", dir === "desc" ? "DESC" : "ASC");
+    } else {
+      request.sortBy.forEach((sortBy, index) => {
+        const orderKeys: (keyof Order)[] = ["field", "direction"];
+        orderKeys.forEach((key) => {
+          const value = sortBy[key];
+          if (value !== undefined) {
+            setParam(`sortBy[${index}][${key}]`, encodeURIComponent(value));
+          }
+        });
       });
-    });
+    }
   }
 
   if (request?.groupBy?.length) {
